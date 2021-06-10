@@ -1,24 +1,20 @@
-import { useState, useEffect } from 'react';
 import { useFormikContext } from 'formik';
+
 const ErrorDisplay = () => {
   const { errors, touched } = useFormikContext();
-  const [messages, setMessages] = useState([]);
-  useEffect(() => {
-    let m = [];
-    for (let key in errors) {
-      if (touched[key]) m = [...m, errors[key]];
-    }
-    setMessages(m);
-    return () => setMessages([]);
-  }, [errors, touched]);
+
+  const messages = () => {
+    //return [key, value] array of errors that need to be displayed.
+    return Object.entries(errors).filter(([key]) => touched[key] != undefined);
+  };
   return (
-    messages.length > 0 && (
-      <div className="p-3 bg-red-200 text-red-700 rounded">
-        {messages.map((message) => (
-          <div>- {message}</div>
-        ))}
-      </div>
-    )
+    <div className="bg-red-200 text-red-700 rounded">
+      {messages().map(([key, value]) => (
+        <div className="py-1 px-2" key={key}>
+          - {value}
+        </div>
+      ))}
+    </div>
   );
 };
 

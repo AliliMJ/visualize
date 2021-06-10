@@ -17,7 +17,7 @@ const Login = () => {
     try {
       await login(data.email, data.password);
 
-      history.push('/home');
+      history.push('/dashboard');
     } catch (e) {
       setDialogHidden(false);
     }

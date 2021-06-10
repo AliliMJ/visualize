@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { database } from '../api/firebase';
 import { useAuth } from '../hook/useAuth';
+import { FaCamera } from 'react-icons/fa';
 
-const Home = () => {
+const Profile = () => {
   const { logout, user } = useAuth();
   const [userInfo, setUserInfo] = useState({});
 
@@ -21,7 +22,7 @@ const Home = () => {
   }, [user.uid]);
 
   return (
-    <div className="flex  items-center pt-20">
+    <div>
       <button
         className="text-red-500 rounded px-4 py-1 bg-transparent border-2 border-red-500"
         onClick={handleLogout}
@@ -29,7 +30,7 @@ const Home = () => {
         Log out
       </button>
 
-      <div className="w-5/6 flex ml-auto rounded  py-6 border bg-white">
+      <div className="flex rounded  py-6 border bg-white">
         <div className="flex flex-col border-r px-10 h-max items-center w-min space-y-6">
           <div className="relative">
             <div className="rounded-full w-20 h-20 overflow-hidden flex items-center justify-center">
@@ -38,12 +39,9 @@ const Home = () => {
                 src="https://source.unsplash.com/random"
               />
             </div>
-            <div className=" group absolute rounded-full w-8 h-8 bg-white flex items-center justify-center -bottom-1 -right-1">
-              <div className=" group-hover:bg-gray-700 shadow rounded-full w-7 h-7 bg-white flex items-center justify-center ">
-                <i
-                  className="fa fa-camera group-hover:text-white"
-                  aria-hidden="true"
-                ></i>
+            <div className="absolute rounded-full w-8 h-8 bg-white flex items-center justify-center -bottom-1 -right-1">
+              <div className=" hover:bg-gray-200 shadow rounded-full w-7 h-7 bg-white flex items-center justify-center ">
+                <FaCamera />
               </div>
             </div>
           </div>
@@ -84,4 +82,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;
