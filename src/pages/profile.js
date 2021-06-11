@@ -57,8 +57,7 @@ const Profile = ({ className }) => {
     <div
       name="container"
       className={
-        className +
-        ' grid grid-cols-1  md:grid-cols-2 w-full  gap-y-3 gap-x-6 p-6 '
+        className + ' grid grid-cols-1  md:grid-cols-2 w-full  gap-y-3 gap-x-6 '
       }
     >
       <Title />

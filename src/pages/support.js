@@ -17,7 +17,7 @@ const Support = () => {
     console.log(data.message);
   };
   return (
-    <div className="p-3 flex flex-col space-y-6">
+    <div className="flex flex-col space-y-6">
       <div className="space-y-3">
         <div className="flex items-center space-x-6">
           <h1 className="text-3xl">Signaler un probléme</h1>
