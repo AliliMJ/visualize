@@ -6,6 +6,7 @@ import { AuthProvider } from './hook/useAuth';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PrivateRoute from './components/privateRoute';
 import Dashboard from './pages/dashboard';
+import { Map } from './pages/extension/useMap';
 
 function App() {
   return (
@@ -16,7 +17,9 @@ function App() {
             <Route exact path="/" component={Welcome} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
-            <PrivateRoute path="/dashboard" component={Dashboard} />
+            <Map>
+              <PrivateRoute path="/dashboard" component={Dashboard} />
+            </Map>
           </Switch>
         </AuthProvider>
       </Router>

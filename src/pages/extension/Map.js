@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
 import ReactMapGl, { MapContext } from 'react-map-gl';
 import { BiLocationPlus } from 'react-icons/bi';
+import { useMap } from './useMap';
 
 function Marker({ longitude, latitude }) {
   const context = useContext(MapContext);
+
   const [x, y] = context.viewport.project([longitude, latitude]);
   const markerPosition = { left: x - 15, top: y - 30 };
 
@@ -26,28 +28,14 @@ function Position({ x, y }) {
 }
 
 function Map() {
-  const [lngLat, setLngLat] = useState([0, 0]);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [viewport, setViewport] = useState({
-    width: 800,
-    height: 500,
-    latitude: 37.7577,
-    longitude: -122.4376,
-    zoom: 8,
-  });
-
-  function changeMarkerPos([x, y]) {
-    setLngLat([x, y]);
-  }
-
-  function changeMousePos([x, y]) {
-    const deciamls = 4;
-    const pos = {
-      x: x.toFixed(deciamls),
-      y: y.toFixed(deciamls),
-    };
-    setPosition(pos);
-  }
+  const {
+    lngLat,
+    position,
+    viewport,
+    setViewport,
+    changeMarkerPos,
+    changeMousePos,
+  } = useMap();
 
   return (
     <div className="flex space-x-1">
@@ -62,7 +50,7 @@ function Map() {
       >
         <Marker longitude={lngLat[0]} latitude={lngLat[1]} />
       </ReactMapGl>
-      <div className="p-3 w-64 w-max border rounded flex flex-col flex-shrink-0">
+      <div className="p-3 w-64 w-max border rounded flex flex-col flex-grow">
         <Position x={position.x} y={position.y} />
       </div>
     </div>

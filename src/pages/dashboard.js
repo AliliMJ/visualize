@@ -1,21 +1,25 @@
 import Support from './support';
-import { Link, Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Profile from './profile';
-import logo from '../svg/logo.svg';
-import Map from './extension/Map';
-import Sidebar from './extension/Sidebar';
-import Navbar from './extension/Navbar';
+import logo_white from '../svg/logo_white.svg';
+import Map from './extension/map';
+import Sidebar from './extension/sidebar';
 import Acceuil from './acceuil';
+import Navbar from './navbar';
 
 const Dashboard = () => {
   return (
-    <div className="grid grid-cols-5 px-2 gap-1">
-      <img className="w-20 place-self-center" src={logo} />
+    <div className="grid grid-cols-5 px-2 gap-0 bg-blue-500 h-full">
+      <img className="w-20 place-self-center" src={logo_white} />
+      <Navbar className="col-span-4 py-3 self-center" />
 
-      <Sidebar className="pl-10 bg-blue-500 row-start-2 row-span-4" />
+      <Sidebar className="pl-5 row-start-2 row-span-4" />
 
-      <div className="col-start-2 col-span-4 row-span-4 row-start-2 border bg-white rounded px-6 py-3">
+      <div className="col-start-2 col-span-4 row-span-4 row-start-2  bg-white rounded px-6 py-3 -ml-px">
         <Switch>
+          <Route exact path="/dashboard">
+            <Redirect to="/dashboard/acceuil" />
+          </Route>
           <Route path="/dashboard/profile">
             <Profile />
           </Route>

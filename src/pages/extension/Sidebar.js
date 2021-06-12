@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AiFillHome } from 'react-icons/ai';
 import { FiMapPin } from 'react-icons/fi';
 import { TiDocumentText } from 'react-icons/ti';
 import { MdPersonOutline } from 'react-icons/md';
 import { FaBullhorn } from 'react-icons/fa';
-import SideBtn from './sideBtn';
+import SidebarButton from './sidebarButton';
 import { useLocation } from 'react-router-dom';
 function Sidebar({ className }) {
   const buttons = [
@@ -53,9 +53,9 @@ function Sidebar({ className }) {
   const location = useLocation();
 
   return (
-    <div className={`flex flex-col space-y-0 h-full ${className}`}>
+    <div className={`flex flex-col py-20 space-y-3 h-full ${className}`}>
       {buttons.map((button) => (
-        <SideBtn
+        <SidebarButton
           key={button.id}
           path={button.path}
           selected={location.pathname.startsWith(button.path)}

@@ -1,15 +1,23 @@
-import React from "react";
-function SidebarButton(props) {
+import { EnhancedSelector } from '../../components/common/selector';
+import { Link } from 'react-router-dom';
+
+//adds to a component a condition property to render with his children or render his children only.
+
+const SidebarButton = ({ selected, name, path, icon }) => {
   return (
-    <div className={props.selected ? " bg-white delay-100 flex py-8 my-10 px-14 rounded-l-full" : " bg-primaryBlue flex delay-100 py-8 my-10 px-14 rounded-sm" }>
-        <div className={props.selected ? "animate-bounce" : ""}>
-          {props.icon}
-        </div>
-      <button className={props.selected ? "text-primaryBlue pl-6 text-2xl focus:outline-none" : "text-white pl-6 text-2xl focus:outline-none"} onClick={props.click}>
-        {props.name}
-      </button>
-    </div>
+    <EnhancedSelector condition={selected}>
+      <div
+        className={`flex items-center  px-6 space-x-3 py-3 text-white z-20 ${
+          selected && 'text-blue-500 z-10'
+        }`}
+      >
+        {icon({
+          className: `w-4 ${selected ? 'text-blue-500' : 'text-white'}`,
+        })}
+        <Link to={path}>{name}</Link>
+      </div>
+    </EnhancedSelector>
   );
-}
+};
 
 export default SidebarButton;

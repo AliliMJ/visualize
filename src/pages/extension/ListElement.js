@@ -1,37 +1,50 @@
-import React from "react";
-import { VscGripper } from "react-icons/vsc";
-import { GiSpikeball } from "react-icons/gi";
-import { BiPencil } from "react-icons/bi";
-import { GrTrash } from "react-icons/gr";
+import React from 'react';
+import { VscGripper } from 'react-icons/vsc';
 
-function ListElement({ name, description }) {
+import { FaPen, FaTrash, FaCircle } from 'react-icons/fa';
+import ListButton from './listButton';
+import classNames from 'classnames';
+
+function ListElement({ name, description, state }) {
   return (
-    <div className="flex flex-row space-x-10 m-10 py-1 px-2 border border-gray-800 rounded">
-      <div className="flex flex-col self-start">
-        <h3 className="p-2 text-2xl">{name}</h3>
-        
-        
-        {/*icone + etat*/ }
-        <div className="flex space-x-4">
-          <div className="mt-1">
-            <GiSpikeball color="red" />
+    <div className="flex flex-row  py-2 px-3 border border-gray-300 rounded">
+      <div className="flex flex-col self-start space-y-2">
+        <section>
+          <h1 className="text-2xl">{name}</h1>
+          <div className="text-gray-500 ">{description}</div>
+        </section>
+
+        {/*icone + etat*/}
+        <div className="flex items-center text-xs space-x-2">
+          <div>Etat:</div>
+          <div>
+            <FaCircle
+              className={classNames(
+                {
+                  'text-red-400': state.bad,
+                },
+                {
+                  'text-yellow-400': state.medium,
+                },
+                { 'text-green-400': state.good }
+              )}
+            />
           </div>
-          <h5 className="text-gray-600 ">{description}</h5>
+          <div className="text-gray-400 ">{state.name}</div>
         </div>
-      
       </div>
 
-      <div className="flex self-end p-4">
-        
-        <button className="flex hover:bg-gray-200 border py-2 mx-3 rounded">
-          <div className="mx-5 my-1.5"><BiPencil size={22}/> </div>
-          <h2 className="mr-5 p-1">Modifier</h2>
-        </button>
+      <div className="flex ml-auto space-x-5 self-end items-center self-center">
+        <ListButton name="modifier" className="border  text-xs">
+          <FaPen />
+        </ListButton>
 
-        <button className="flex bg-red-500 hover:bg-red-700 border py-2 mx-3 rounded">
-          <div className="mx-5 my-1.5"><GrTrash color size={20}/> </div>
-          <h2 className="mr-5 p-1 text-white">Suprimmer</h2>
-        </button>
+        <ListButton
+          name="supprimer"
+          className="bg-red-500 hover:bg-red-700 text-white text-xs"
+        >
+          <FaTrash />
+        </ListButton>
 
         <button className="text-xl p-2 ml-3 border-gray-500 hover:bg-gray-200">
           <VscGripper />
