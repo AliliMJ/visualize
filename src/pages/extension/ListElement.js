@@ -9,25 +9,21 @@ const DeleteButton = reactRename(ListButton, 'Deleting button');
 const EditButton = reactRename(ListButton, 'Edit button');
 const MoreButton = reactRename(ListButton, 'More about the project');
 
-const ProjectState = ({ state }) => (
-    <div className="flex items-center text-xs space-x-2">
-        <div>Etat:</div>
-        <div>
-            <FaCircle
-                className={classNames(
-                    {
-                        'text-red-400': state.bad,
-                    },
-                    {
-                        'text-yellow-400': state.medium,
-                    },
-                    { 'text-green-400': state.good }
-                )}
-            />
+const ProjectState = ({ state }) => {
+    const remarques = ['En retard', 'Moyen', 'Bon'];
+
+    const classes = ['text-red-400', 'text-yellow-400', 'text-green-400'];
+
+    return (
+        <div className="flex items-center text-xs space-x-2">
+            <div>Etat:</div>
+            <div>
+                <FaCircle className={classes[state]} />
+            </div>
+            <div className="text-gray-400 ">{remarques[state]}</div>
         </div>
-        <div className="text-gray-400 ">{state.name}</div>
-    </div>
-);
+    );
+};
 
 function ListElement({ name, description, state }) {
     return (

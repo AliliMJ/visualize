@@ -23,10 +23,9 @@ function Marker({ longitude, latitude }) {
 
 function Position({ x, y }) {
     return (
-        <div className="flex justify-center bg-primaryBlue">
-            <h1 className="text-black">
-                X : {x} Y : {y}
-            </h1>
+        <div className="flex flex-col">
+            <div>Longitude : {x}</div>
+            <div>Latitude : {y}</div>
         </div>
     );
 }
