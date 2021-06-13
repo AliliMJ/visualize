@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 
-const standarStyle = 'flex self-stretch items-center space-x-2 p-2 rounded';
+const standarStyle =
+    'flex self-stretch items-center space-x-2 px-3 py-2 rounded';
 
-const ListButton = ({ className, name, children, ...props }) => {
+const IconButton = ({ className, name, children, ...props }) => {
     return (
         <button className={classNames(standarStyle, className)} {...props}>
             {children}
@@ -11,4 +12,4 @@ const ListButton = ({ className, name, children, ...props }) => {
     );
 };
 
-export default ListButton;
+export default IconButton;
