@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PrivateRoute from './components/privateRoute';
 import Dashboard from './pages/dashboard';
 import { Map } from './hook/useMap';
+import Project from './pages/projects/project';
 
 function App() {
     return (
@@ -21,6 +22,10 @@ function App() {
                             <PrivateRoute
                                 path="/dashboard"
                                 component={Dashboard}
+                            />
+                            <PrivateRoute
+                                path="/projects/:id"
+                                component={Project}
                             />
                         </Map>
                     </Switch>

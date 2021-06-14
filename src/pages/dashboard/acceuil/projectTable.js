@@ -9,48 +9,47 @@ const ProjectTable = () => {
     const columns = useMemo(
         () => [
             { Header: 'Code', accessor: 'id' },
-            { Header: 'Titre', accessor: 'title' },
-            { Header: 'Etat', accessor: 'state' },
-            { Header: 'Description', accessor: 'description' },
+            {
+                Header: 'Titre',
+                accessor: 'title',
+                Cell: ({ row }) => (
+                    <Link
+                        className="text-blue-500 underline"
+                        to={`/projects/${row.original.id}`}
+                    >
+                        {row.original.title}
+                    </Link>
+                ),
+            },
+            {
+                Header: 'Etat',
+                accessor: 'state',
+                Cell: ({ row }) => (
+                    <span
+                        className={classNames(
+                            'rounded-full px-4 py-1 text-white',
+                            getClass(row.original.state)
+                        )}
+                    >
+                        {getRemarque(row.original.state)}
+                    </span>
+                ),
+            },
+            {
+                Header: 'Description',
+                accessor: 'description',
+                Cell: ({ row }) => (
+                    <span className="text-gray-400 truncate ... w-10">
+                        {row.original.description}
+                    </span>
+                ),
+            },
         ],
         []
     );
     const { projects } = useAuth();
 
-    const data = useMemo(
-        () =>
-            projects.map((project) => {
-                const cell = { ...project };
-                cell.state = (
-                    <span
-                        className={classNames(
-                            'rounded-full px-4 py-1 text-white',
-                            getClass(cell.state)
-                        )}
-                    >
-                        {getRemarque(cell.state)}
-                    </span>
-                );
-                cell.description = (
-                    <span className="text-gray-400 truncate ... w-10">
-                        {cell.description}
-                    </span>
-                );
-                cell.title = (
-                    <Link
-                        to={`/projects/${project.id}`}
-                        className="text-blue-500 underline"
-                    >
-                        {cell.title}
-                    </Link>
-                );
-
-                return cell;
-            }),
-        [projects]
-    );
-
-    return <Table columns={columns} data={data} />;
+    return <Table columns={columns} data={projects} />;
 };
 
 export default ProjectTable;

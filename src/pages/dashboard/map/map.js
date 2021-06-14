@@ -33,7 +33,7 @@ function Position({ x, y }) {
 function Map() {
     const {
         lngLat,
-        position,
+
         viewport,
         setViewport,
         changeMarkerPos,
@@ -42,31 +42,31 @@ function Map() {
     const mapRef = useRef();
     return (
         <div className="flex space-x-1">
-            <ReactMapGl
-                className="rounded"
-                {...viewport}
-                ref={mapRef}
-                onViewportChange={(nextViewport) => setViewport(nextViewport)}
-                mapboxApiAccessToken={MAPBOX_TOKEN}
-                mapStyle="mapbox://styles/hamzafeghouli/ckkv7wgfo3pe417pgw0e1mycw"
-                onClick={(e) => changeMarkerPos(e.lngLat)}
-                onMouseMove={(e) => changeMousePos(e.lngLat)}
-            >
-                <Marker longitude={lngLat[0]} latitude={lngLat[1]} />
-                <Geocoder
-                    mapRef={mapRef}
+            <div className=" overflow-hidden rounded h-96">
+                <ReactMapGl
+                    {...viewport}
+                    ref={mapRef}
                     onViewportChange={(nextViewport) =>
                         setViewport(nextViewport)
                     }
                     mapboxApiAccessToken={MAPBOX_TOKEN}
-                    position="top-left"
-                />
-            </ReactMapGl>
+                    mapStyle="mapbox://styles/hamzafeghouli/ckkv7wgfo3pe417pgw0e1mycw"
+                    onClick={(e) => changeMarkerPos(e.lngLat)}
+                    onMouseMove={(e) => changeMousePos(e.lngLat)}
+                >
+                    <Marker longitude={lngLat[0]} latitude={lngLat[1]} />
+                    <Geocoder
+                        mapRef={mapRef}
+                        onViewportChange={(nextViewport) =>
+                            setViewport(nextViewport)
+                        }
+                        mapboxApiAccessToken={MAPBOX_TOKEN}
+                        position="top-left"
+                    />
+                </ReactMapGl>
+            </div>
             <div className="p-3 w-64 w-max border rounded flex flex-col flex-grow">
-                <div className="font-bold text-gray-400">
-                    Position curseur :{' '}
-                </div>
-                <Position x={position.x} y={position.y} />
+                <div className="font-bold text-gray-400">Details</div>
             </div>
         </div>
     );

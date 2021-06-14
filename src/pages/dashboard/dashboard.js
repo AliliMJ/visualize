@@ -9,7 +9,7 @@ import Navbar from './navbar';
 
 const Dashboard = () => {
     return (
-        <div className="grid grid-cols-5 px-2 gap-0 bg-blue-500 h-full">
+        <div className="grid grid-cols-5 px-2 gap-0 bg-blue-500 h-screen pb-2">
             <img className="w-20 place-self-center" src={logo_white} />
             <Navbar className="col-span-4 py-3 self-center" />
 
