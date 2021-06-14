@@ -1,9 +1,9 @@
 import Support from './support/support';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Profile from './profile/profile';
-import logo_white from '../svg/logo_white.svg';
-import Map from './extension/map';
-import Sidebar from './extension/sidebar';
+import logo_white from '../../svg/logo_white.svg';
+import Map from './map';
+import Sidebar from './sidebar';
 import Acceuil from './acceuil/acceuil';
 import Navbar from './navbar';
 

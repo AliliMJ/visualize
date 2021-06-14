@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useAuth } from '../../hook/useAuth';
-import Table from './table';
+import Table from '../../components/common/table';
 
 const CollectorTable = () => {
     const { collectors } = useAuth();

@@ -1,6 +1,6 @@
 import { FaDoorOpen, FaRegBell } from 'react-icons/fa';
 import { FiMessageCircle } from 'react-icons/fi';
-import { useAuth } from '../hook/useAuth';
+import { useAuth } from '../../hook/useAuth';
 const Navbar = (props) => {
     const { logout } = useAuth();
     return (

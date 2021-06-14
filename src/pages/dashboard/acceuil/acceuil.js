@@ -1,6 +1,7 @@
 import { Redirect, Route, Switch } from 'react-router-dom';
 import TabsAcceuil from './tabsAcceuil';
-import Projects from '../../extension/projects';
+import Projects from '../../../temp/projects';
+
 import CollectorTable from '../../projects/collectorTable';
 
 const Acceuil = () => {

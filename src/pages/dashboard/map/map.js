@@ -1,7 +1,7 @@
 import React, { useContext, useRef } from 'react';
 import ReactMapGl, { MapContext } from 'react-map-gl';
 import { BiLocationPlus } from 'react-icons/bi';
-import { useMap } from './useMap';
+import { useMap } from '../../../hook/useMap';
 import Geocoder from 'react-map-gl-geocoder';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
