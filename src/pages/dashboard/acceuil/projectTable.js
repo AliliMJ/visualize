@@ -1,5 +1,5 @@
 import { useAuth } from '../../../hook/useAuth';
-import Table from './table';
+import Table from '../../../components/common/table';
 import { useMemo } from 'react';
 import { getClass, getRemarque } from '../../../helpers/states';
 import classNames from 'classnames';

@@ -1,8 +1,8 @@
 import { Redirect, Route, Switch } from 'react-router-dom';
 import TabsAcceuil from './tabsAcceuil';
-import Projects from '../../../temp/projects';
 
 import CollectorTable from '../../projects/collectorTable';
+import ProjectTable from './projectTable';
 
 const Acceuil = () => {
     return (
@@ -13,7 +13,7 @@ const Acceuil = () => {
                     <Redirect to="/dashboard/acceuil/projets" />
                 </Route>
                 <Route path="/dashboard/acceuil/projets">
-                    <Projects />
+                    <ProjectTable />
                 </Route>
                 <Route path="/dashboard/acceuil/collecteurs">
                     <CollectorTable />
