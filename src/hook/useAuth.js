@@ -45,17 +45,54 @@ export const AuthProvider = ({ children }) => {
             user &&
             database.projects
                 .where('ower', '==', user.uid)
-                .get()
-                .then(({ docs }) => {
-                    setProjects(docs.map((doc) => doc.data()));
-                })
+                .onSnapshot(({ docs }) =>
+                    setProjects(docs.map((doc) => doc.data()))
+                )
         );
     }, [user]);
+    const collectors = [
+        {
+            id: 0,
+            phone: '0789940112',
+            firstname: 'John',
+            lastname: 'Doe',
+            email: 'john1234@gmail.com',
+        },
+        {
+            id: 1,
+            phone: '0511659079',
+            firstname: 'Mark',
+            lastname: 'Smith',
+            email: 'smith_ma@yahoo.com',
+        },
+        {
+            id: 2,
+            phone: '0776740113',
+            firstname: 'Jake',
+            lastname: 'Pall',
+            email: 'jake69.pal1@gmail.com',
+        },
+        {
+            id: 3,
+            phone: '0679613179',
+            firstname: 'Mayers',
+            lastname: 'Wayne',
+            email: 'wayne.mayers@hotmail.com',
+        },
+        {
+            id: 4,
+            phone: '0613640179',
+            firstname: 'George',
+            lastname: 'Watchnew',
+            email: 'george_watchdog12@hotmail.com',
+        },
+    ];
 
     const value = {
         user,
         userInfo,
         projects,
+        collectors,
         signup,
         login,
         logout,
