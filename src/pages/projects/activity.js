@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { database } from '../../api/firebase';
-import { JsonEditor as Editor } from 'jsoneditor-react';
+import ReactJson from 'react-json-view';
 
 const Activity = ({ match }) => {
     const [activity, setActivity] = useState({});
@@ -9,10 +9,21 @@ const Activity = ({ match }) => {
             .doc(match.params.id)
             .get()
             .then((doc) => setActivity(doc.data()));
-    }, []);
+    }, [match.params.id]);
     return (
-        <div>
-            <Editor value={activity} />
+        <div className="p-4">
+            <div className="px-10 py-3 shadow  rounded border">
+                <ReactJson
+                    src={activity}
+                    displayObjectSize={false}
+                    displayDataTypes={false}
+                    enableClipboard={false}
+                    onAdd={() => {}}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                    iconStyle="circle"
+                />
+            </div>
         </div>
     );
 };

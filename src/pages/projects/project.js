@@ -1,12 +1,58 @@
 import { useAuth } from '../../hook/useAuth';
 
 import StateBadge from './stateBadge';
+import { useState, useEffect } from 'react';
+import { database } from '../../api/firebase';
+import firebase from 'firebase/app';
+import CollectorTable from './collectorTable';
+import ActivityTable from './activityTable';
 const Project = ({ match }) => {
     const { projects } = useAuth();
     const [project] = projects.filter((p) => p.id === match.params.id);
+    const [collectors, setCollectors] = useState([]);
+    const [activities, setActivities] = useState([]);
+    useEffect(() => {
+        return (
+            project &&
+            database.users
+                .where(
+                    firebase.firestore.FieldPath.documentId(),
+                    'in',
+                    project.collectors
+                )
+                .get()
+                .then(({ docs }) =>
+                    setCollectors(docs.map((doc) => doc.data()))
+                )
+        );
+    }, [project]);
+
+    useEffect(() => {
+        project &&
+            database.activities
+                .where('projectID', '==', project.id)
+                .get()
+                .then(({ docs }) =>
+                    setActivities(
+                        docs.map((doc) => {
+                            const { name, projectID, state, phase } =
+                                doc.data();
+
+                            return {
+                                name,
+                                projectID,
+                                state,
+                                phase,
+                                id: doc.id,
+                            };
+                        })
+                    )
+                );
+    }, [project]);
 
     return project ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+            {console.log(activities)}
             <div className="px-4 py-5 sm:px-6">
                 <h3 className="text-lg leading-6 font-bold text-gray-900">
                     Détails du projet
@@ -96,6 +142,23 @@ const Project = ({ match }) => {
                                     </div>
                                 </li>
                             </ul>
+                        </dd>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">
+                            Collecteurs
+                        </dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <CollectorTable collectors={collectors} />
+                        </dd>
+                    </div>
+
+                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">
+                            Activitées
+                        </dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <ActivityTable activities={activities} />
                         </dd>
                     </div>
                 </dl>

@@ -29,6 +29,7 @@ function App() {
                                 component={Project}
                             />
                             <PrivateRoute
+                                exact
                                 path="/activities/:id"
                                 component={Activity}
                             />

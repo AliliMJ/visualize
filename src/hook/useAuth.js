@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../api/firebase';
+import { auth, storage } from '../api/firebase';
 import { database } from '../api/firebase';
 
 const AuthContext = createContext();
@@ -41,15 +41,23 @@ export const AuthProvider = ({ children }) => {
     }, [user]);
 
     useEffect(() => {
-        return (
-            user &&
-            database.projects
+        return userInfo && storage.ref(`avatars/${userInfo.email}`);
+    }, [userInfo]);
+
+    useEffect(() => {
+        if (userInfo && userInfo.role === 'superviseur')
+            return database.projects
                 .where('ower', '==', user.uid)
                 .onSnapshot(({ docs }) =>
                     setProjects(docs.map((doc) => doc.data()))
-                )
-        );
-    }, [user]);
+                );
+        if (userInfo && userInfo.role === 'collecteur')
+            return database.projects
+                .where('collectors', 'array-contains', user.uid)
+                .onSnapshot(({ docs }) =>
+                    setProjects(docs.map((doc) => doc.data()))
+                );
+    }, [userInfo, user?.uid]);
     const collectors = [
         {
             id: 0,
