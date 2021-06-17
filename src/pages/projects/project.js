@@ -1,12 +1,12 @@
 import StateBadge from './stateBadge';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { database, getDoc, getDocs } from '../../api/firebase';
 
 import CollectorTable from './collectorTable';
 import ActivityTable from './activityTable';
 import firebase from 'firebase';
 import { useProjects } from '../../hook/useProjects';
-import { useInfo } from '../../hook/useInfo';
+
 /**
  *
  *

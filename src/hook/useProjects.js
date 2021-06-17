@@ -3,7 +3,11 @@ import { useInfo } from './useInfo';
 import { database } from '../api/firebase';
 import { useAuth } from './useAuth';
 import { getDocs } from '../api/firebase';
-
+/**
+ *
+ * @returns Array of projects, owned projects if user type
+ * is supervisor, if user of type collector then it returns projects he signed to collect data of.
+ */
 export const useProjects = () => {
     const { role } = useInfo();
     const { user } = useAuth();
