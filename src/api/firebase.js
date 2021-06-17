@@ -28,4 +28,23 @@ export const database = {
     activities: firestore.collection('activities'),
 };
 
+export const docListen = (docRef, action) => {
+    return docRef.onSnapshot((doc) => action(doc.data()));
+};
+
+export const getDoc = async (docRef) => {
+    const doc = await docRef.get();
+
+    return { ...doc.data(), docID: doc.id };
+};
+
+export const getDocs = async (query) => {
+    const { docs } = await query.get();
+    try {
+        return docs.map((doc) => ({ ...doc.data(), docID: doc.id }));
+    } catch {
+        return [];
+    }
+};
+
 export default app;

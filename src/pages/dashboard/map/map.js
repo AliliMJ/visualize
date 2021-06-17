@@ -42,7 +42,7 @@ function Map() {
     const mapRef = useRef();
     return (
         <div className="flex space-x-1">
-            <div className=" overflow-hidden rounded h-96">
+            <div className=" overflow-hidden rounded" style={{ height: 450 }}>
                 <ReactMapGl
                     {...viewport}
                     ref={mapRef}

@@ -21,11 +21,10 @@ const Support = () => {
     return (
         <div className="flex flex-col space-y-6">
             <div className="space-y-3">
-                <div className="flex items-center space-x-6">
-                    <h1 className="text-3xl">Signaler un probléme</h1>
+                <div className="flex items-center space-x-6 text-gray-400">
+                    <h1 className="text-3xl ">Signaler un probléme</h1>
                     <MdReportProblem size="2rem" />
                 </div>
-                <hr />
             </div>
             <div className="flex items-center space-x-2 p-2 bg-blue-100 rounded  ">
                 <FaInfoCircle size="1rem" className="flex-shrink-0" />

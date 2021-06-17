@@ -1,26 +1,22 @@
-import { useAuth } from '../../../hook/useAuth';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera, FaInfoCircle } from 'react-icons/fa';
+import { useInfo } from '../../../hook/useInfo';
 const Title = () => {
     return (
-        <div className="col-span-full space-y-2">
+        <div className="flex space-x-6 items-center col-span-full space-y-2 text-gray-400">
             <h1 className="text-3xl">Données personnelles</h1>
-
-            <hr />
+            <FaInfoCircle size="2rem" />
         </div>
     );
 };
 
-const ProfileCard = ({ firstName, lastName, role, className }) => (
+const ProfileCard = ({ avatar, firstName, lastName, role, className }) => (
     <div
         id="profile_card"
         className={`flex flex-col border rounded py-2 px-10 h-max items-center w-full  space-y-6 ${className}`}
     >
         <div className="relative">
             <div className="rounded-full w-20 h-20 overflow-hidden flex items-center justify-center">
-                <img
-                    className="object-cover h-full w-full"
-                    src="https://source.unsplash.com/random"
-                />
+                <img className="object-cover h-full w-full" src={avatar} />
             </div>
             <div className="absolute rounded-full w-8 h-8 bg-white flex items-center justify-center -bottom-1 -right-1">
                 <div className=" hover:bg-gray-200 shadow rounded-full w-7 h-7 bg-white flex items-center justify-center ">
@@ -45,13 +41,7 @@ const Info = ({ label, info, className }) => {
     );
 };
 const Profile = ({ className }) => {
-    const { userInfo } = useAuth();
-
-    // useEffect(() => {
-    //   return database.users
-    //     .doc(user.uid)
-    //     .onSnapshot((doc) => setUserInfo({ ...doc.data() }));
-    // }, [user.uid]);
+    const { firstName, lastName, role, email, avatar } = useInfo();
 
     return (
         <div
@@ -65,16 +55,17 @@ const Profile = ({ className }) => {
 
             <ProfileCard
                 className="row-start-2 md:row-span-5 justify-self-center"
-                firstName={userInfo.firstName}
-                lastName={userInfo.lastName}
-                role={userInfo.role}
+                firstName={firstName}
+                lastName={lastName}
+                role={role}
+                avatar={avatar}
             />
 
-            <Info label="Nom" info={userInfo.firstName} />
-            <Info label="Prénom" info={userInfo.lastName} />
-            <Info label="Adresse email" info={userInfo.email} />
+            <Info label="Nom" info={firstName} />
+            <Info label="Prénom" info={lastName} />
+            <Info label="Adresse email" info={email} />
             <Info label="N° téléphone" info="Aucun numéro ajouté." />
-            <Info label="Rôle" info={userInfo.role} />
+            <Info label="Rôle" info={role} />
         </div>
     );
 };

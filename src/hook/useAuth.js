@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth, storage } from '../api/firebase';
-import { database } from '../api/firebase';
+import { auth } from '../api/firebase';
 
 const AuthContext = createContext();
 
@@ -10,8 +9,6 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [userInfo, setUserInfo] = useState({});
-    const [projects, setProjects] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
     const signup = (email, password) => {
@@ -31,76 +28,8 @@ export const AuthProvider = ({ children }) => {
         return unsubscribe;
     }, []);
 
-    useEffect(() => {
-        return (
-            user &&
-            database.users
-                .doc(user.uid)
-                .onSnapshot((doc) => setUserInfo({ ...doc.data() }))
-        );
-    }, [user]);
-
-    useEffect(() => {
-        return userInfo && storage.ref(`avatars/${userInfo.email}`);
-    }, [userInfo]);
-
-    useEffect(() => {
-        if (userInfo && userInfo.role === 'superviseur')
-            return database.projects
-                .where('ower', '==', user.uid)
-                .onSnapshot(({ docs }) =>
-                    setProjects(docs.map((doc) => doc.data()))
-                );
-        if (userInfo && userInfo.role === 'collecteur')
-            return database.projects
-                .where('collectors', 'array-contains', user.uid)
-                .onSnapshot(({ docs }) =>
-                    setProjects(docs.map((doc) => doc.data()))
-                );
-    }, [userInfo, user?.uid]);
-    const collectors = [
-        {
-            id: 0,
-            phone: '0789940112',
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'john1234@gmail.com',
-        },
-        {
-            id: 1,
-            phone: '0511659079',
-            firstname: 'Mark',
-            lastname: 'Smith',
-            email: 'smith_ma@yahoo.com',
-        },
-        {
-            id: 2,
-            phone: '0776740113',
-            firstname: 'Jake',
-            lastname: 'Pall',
-            email: 'jake69.pal1@gmail.com',
-        },
-        {
-            id: 3,
-            phone: '0679613179',
-            firstname: 'Mayers',
-            lastname: 'Wayne',
-            email: 'wayne.mayers@hotmail.com',
-        },
-        {
-            id: 4,
-            phone: '0613640179',
-            firstname: 'George',
-            lastname: 'Watchnew',
-            email: 'george_watchdog12@hotmail.com',
-        },
-    ];
-
     const value = {
         user,
-        userInfo,
-        projects,
-        collectors,
         signup,
         login,
         logout,

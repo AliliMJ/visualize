@@ -11,7 +11,7 @@ const ActivityTable = ({ activities }) => {
                 accessor: 'name',
                 Cell: ({ row }) => (
                     <Link
-                        to={`/activities/${row.original.id}`}
+                        to={`/activities/${row.original.docID}`}
                         className="text-blue-400 underline"
                     >
                         {row.original.name}

@@ -44,7 +44,11 @@ const Table = ({ columns, data }) => {
                                 {rows.map((row) => {
                                     prepareRow(row);
                                     return (
-                                        <tr key={row.id} {...row.getRowProps()}>
+                                        <tr
+                                            key={`row-${row.index}`}
+                                            {...row.getRowProps()}
+                                        >
+                                            {console.log(row.index)}
                                             {row.cells.map((cell) => (
                                                 <td
                                                     key={cell.row.id}
