@@ -23,6 +23,7 @@ export const auth = app.auth();
 export const database = {
     users: firestore.collection('users'),
     projects: firestore.collection('projects'),
+    activities: firestore.collection('activitites')
 };
 
 export default app;
