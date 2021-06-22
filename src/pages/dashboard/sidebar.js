@@ -6,6 +6,10 @@ import { MdPersonOutline } from 'react-icons/md';
 import { FaBullhorn } from 'react-icons/fa';
 import SidebarButton from './sidebarButton';
 import { useLocation } from 'react-router-dom';
+import IconButton from '../../components/common/iconButton';
+import { BiLogOut } from 'react-icons/bi';
+import { useAuth } from '../../hook/useAuth';
+
 function Sidebar({ className }) {
     const buttons = [
         {
@@ -51,19 +55,32 @@ function Sidebar({ className }) {
     ];
 
     const location = useLocation();
+    const { logout } = useAuth();
 
     return (
-        <div className={`flex flex-col py-20 space-y-3 h-full ${className}`}>
-            {buttons.map((button) => (
-                <SidebarButton
-                    key={button.id}
-                    path={button.path}
-                    selected={location.pathname.startsWith(button.path)}
-                    name={button.name}
-                    icon={button.icon}
-                />
-            ))}
-            {}
+        <div>
+            <div
+                className={`flex flex-col py-20 space-y-3 h-full ${className}`}
+            >
+                {buttons.map((button) => (
+                    <SidebarButton
+                        key={button.id}
+                        path={button.path}
+                        selected={location.pathname.startsWith(button.path)}
+                        name={button.name}
+                        icon={button.icon}
+                    />
+                ))}
+            </div>
+            <div className="w-full flex justify-center">
+                <IconButton
+                    className="mt-auto bg-red-500 text-white"
+                    onClick={() => logout()}
+                >
+                    <BiLogOut />
+                    <span>Sortir</span>
+                </IconButton>
+            </div>
         </div>
     );
 }

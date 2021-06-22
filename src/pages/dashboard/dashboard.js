@@ -9,13 +9,14 @@ import Navbar from './navbar';
 
 const Dashboard = () => {
     return (
-        <div className="grid grid-cols-5 px-2 gap-0 bg-blue-500 h-screen pb-2">
-            <img className="w-20 place-self-center" src={logo_white} />
-            <Navbar className="col-span-4 py-3 self-center" />
+        <div className="grid grid-cols-5 px-2 gap-0 bg-blue-500 h-screen py-2">
+            <img className="w-20 place-self-center py-3" src={logo_white} />
 
             <Sidebar className="pl-5 row-start-2 row-span-4" />
 
-            <div className="col-start-2 col-span-4 row-span-4 row-start-2  bg-white rounded px-6 py-3 -ml-px">
+            <div className="col-start-2 col-span-4 row-span-5 row-start-1  bg-white rounded space-y-2 px-6 py-3 -ml-px">
+                <Navbar />
+                <hr />
                 <Switch>
                     <Route exact path="/dashboard">
                         <Redirect to="/dashboard/acceuil" />

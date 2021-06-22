@@ -119,7 +119,7 @@ function AddProject(props) {
                 type="submit"
               >
                 Ajouter
-                {console.log(formik.values)}
+                {/* {console.log(formik.values)} */}
               </button>
               
             </Form>

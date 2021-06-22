@@ -8,6 +8,7 @@ import PrivateRoute from './components/privateRoute';
 import Dashboard from './pages/dashboard';
 import { Map } from './hook/useMap';
 import Project from './pages/projects/project';
+import Activity from './pages/projects/activity';
 
 function App() {
     return (
@@ -26,6 +27,11 @@ function App() {
                             <PrivateRoute
                                 path="/projects/:id"
                                 component={Project}
+                            />
+                            <PrivateRoute
+                                exact
+                                path="/activities/:id"
+                                component={Activity}
                             />
                         </Map>
                     </Switch>
