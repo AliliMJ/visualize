@@ -6,6 +6,8 @@ import CollectorTable from './collectorTable';
 import ActivityTable from './activityTable';
 import firebase from 'firebase';
 import { useProjects } from '../../hook/useProjects';
+import IconButton from '../../components/common/iconButton';
+import { FaPlus } from 'react-icons/fa';
 
 /**
  *
@@ -162,10 +164,13 @@ const Project = ({ match }) => {
 
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">
-                            Activitées
+                            <span>Activitées</span>
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 relative">
                             <ActivityTable activities={activities} />
+                            <IconButton className=" absolute bg-green-500 text-white rounded-full h-8 w-8  items-center justify-center top-1 right-1">
+                                <FaPlus />
+                            </IconButton>
                         </dd>
                     </div>
                 </dl>
