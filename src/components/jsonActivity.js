@@ -1,5 +1,6 @@
 import ReactJson from 'react-json-view';
 import classNames from 'classnames';
+
 const JsonActivity = ({ name, className, src, children, ...props }) => {
     return (
         <div className={classNames('shadow rounded border', className)}>

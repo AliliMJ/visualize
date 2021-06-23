@@ -23,8 +23,8 @@ const Table = ({ columns, data }) => {
                             {...getTableProps()}
                         >
                             <thead className="bg-gray-50">
-                                {headerGroups.map((headerGroup) => (
-                                    <tr key={headerGroup.id}>
+                                {headerGroups.map((headerGroup, index) => (
+                                    <tr key={index}>
                                         {headerGroup.headers.map((column) => (
                                             <th
                                                 key={column.id}
@@ -44,14 +44,10 @@ const Table = ({ columns, data }) => {
                                 {rows.map((row) => {
                                     prepareRow(row);
                                     return (
-                                        <tr
-                                            key={`row-${row.index}`}
-                                            {...row.getRowProps()}
-                                        >
-                                            {console.log(row.index)}
+                                        <tr {...row.getRowProps()}>
                                             {row.cells.map((cell) => (
                                                 <td
-                                                    key={cell.row.id}
+                                                    // key={`${cell.row.id}`}
                                                     className="px-6 py-4 whitespace-nowrap"
                                                     {...cell.getCellProps()}
                                                 >

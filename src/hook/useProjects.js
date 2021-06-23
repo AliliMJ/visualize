@@ -24,7 +24,7 @@ export const useProjects = () => {
             setProjects(data);
         };
         return getProjects();
-    }, []);
+    }, [role, user.uid]);
 
     return projects;
 };

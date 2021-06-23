@@ -1,6 +1,6 @@
 import StateBadge from './stateBadge';
 import { useState, useEffect } from 'react';
-import { database, getDoc, getDocs } from '../../api/firebase';
+import { database, docListen, getDoc, getDocs } from '../../api/firebase';
 
 import CollectorTable from './collectorTable';
 import ActivityTable from './activityTable';
@@ -8,6 +8,7 @@ import firebase from 'firebase';
 import { useProjects } from '../../hook/useProjects';
 import IconButton from '../../components/common/iconButton';
 import { FaPlus } from 'react-icons/fa';
+import CollectorModal from './collectorModal';
 
 /**
  *
@@ -15,12 +16,42 @@ import { FaPlus } from 'react-icons/fa';
  * @todo Fix problem when collectors of the project is [].
  */
 const Project = ({ match }) => {
-    const [project] = useProjects().filter((p) => p.docID === match.params.id);
+    // const [projectConst] = useProjects().filter((p) => p.docID === match.params.id);
+    const [project, setProject] = useState({});
+    const [collectorModal, setCollectorModal] = useState(false);
+    const addCollector = async ({ response, value }) => {
+        if (response) {
+            const getUserByEmail = database.users.where('email', '==', value);
+            const collector = await getDocs(getUserByEmail);
+            if (
+                collector &&
+                collector[0] &&
+                collector[0].role === 'collecteur' &&
+                collectors.filter((c) => c.docID === collector[0].docID)
+                    .length === 0
+            ) {
+                setCollectors([...collectors, collector[0]]);
+                const updateProject = {
+                    ...project,
+                    collectors: [...project.collectors, collector[0].docID],
+                };
+
+                database.projects.doc(project.docID).set(updateProject);
+            }
+        }
+
+        setCollectorModal(false);
+    };
 
     const [owner, setOwner] = useState({});
 
     const [collectors, setCollectors] = useState([]);
     const [activities, setActivities] = useState([]);
+    useEffect(() => {
+        const projectRef = database.projects.doc(match.params.id);
+
+        return docListen(projectRef, setProject);
+    }, [match.params.id]);
     useEffect(() => {
         const load = async () => {
             const collectorQuery = database.users.where(
@@ -46,6 +77,8 @@ const Project = ({ match }) => {
 
     return project ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+            {collectorModal && <CollectorModal emit={addCollector} />}
+            {console.log(project)}
             <div className="px-4 py-5 sm:px-6">
                 <h3 className="text-lg leading-6 font-bold text-gray-900">
                     Détails du projet
@@ -157,8 +190,14 @@ const Project = ({ match }) => {
                         <dt className="text-sm font-medium text-gray-500">
                             Collecteurs
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex-col space-y-1">
                             <CollectorTable collectors={collectors} />
+                            <IconButton
+                                className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
+                                onClick={() => setCollectorModal(true)}
+                            >
+                                <FaPlus />
+                            </IconButton>
                         </dd>
                     </div>
 
@@ -166,9 +205,9 @@ const Project = ({ match }) => {
                         <dt className="text-sm font-medium text-gray-500">
                             <span>Activitées</span>
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 relative">
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex-col space-y-1">
                             <ActivityTable activities={activities} />
-                            <IconButton className=" absolute bg-green-500 text-white rounded-full h-8 w-8  items-center justify-center top-1 right-1">
+                            <IconButton className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center">
                                 <FaPlus />
                             </IconButton>
                         </dd>

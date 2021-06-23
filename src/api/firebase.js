@@ -29,7 +29,7 @@ export const database = {
 };
 
 export const docListen = (docRef, action) => {
-    return docRef.onSnapshot((doc) => action(doc.data()));
+    return docRef.onSnapshot((doc) => action({ ...doc.data(), docID: doc.id }));
 };
 
 export const getDoc = async (docRef) => {
