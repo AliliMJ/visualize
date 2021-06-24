@@ -9,15 +9,15 @@ export const  addProjectToDB = ( values, clickCords, fileName) => {
         description: values.description,
         clickCords,
       })
-      .then(uploadFile(fileName,owner))
+      .then(uploadFile(values.name,fileName,owner))
       .catch((e) => window.alert(`Erreur ${e}`));
   }
 
-const uploadFile = (fileName,owner) =>{
+const uploadFile = (projectName,fileName,owner) =>{
     //test purpose, use the ID of the project owner to create separate spaces for each owner in cloud storage
     const cloudStorage = storage.ref();
     console.log(cloudStorage);
-    const fileRef = cloudStorage.child(owner).child(fileName);
+    const fileRef = cloudStorage.child(owner).child(projectName).child(fileName);
     fileRef
       .put(fileName)
       .then(() => console.log("added a file successfully"))
