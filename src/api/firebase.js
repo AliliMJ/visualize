@@ -26,6 +26,7 @@ export const database = {
     users: firestore.collection('users'),
     projects: firestore.collection('projects'),
     activities: firestore.collection('activities'),
+    factures: firestore.collection('factures'),
 };
 
 export const docListen = (docRef, action) => {
