@@ -4,7 +4,10 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-const ActivityTable = ({ activities }) => {
+import IconButton from '../../components/common/iconButton';
+import { FaMinus } from 'react-icons/fa';
+
+const ActivityTable = ({ activities, onDelete }) => {
     const columns = useMemo(
         () => [
             {
@@ -60,8 +63,20 @@ const ActivityTable = ({ activities }) => {
                     />
                 ),
             },
+            {
+                Header: '',
+                accessor: 'activity',
+                Cell: ({ row }) => (
+                    <IconButton
+                        onClick={() => onDelete(row.original)}
+                        className="shadow text-red-600 hover:bg-red-300 rounded-full w-8 h-8 bg-red-200"
+                    >
+                        <FaMinus />
+                    </IconButton>
+                ),
+            },
         ],
-        [activities]
+        [onDelete, activities]
     );
 
     return <Table columns={columns} data={activities} />;
