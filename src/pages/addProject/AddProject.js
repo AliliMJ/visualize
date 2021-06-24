@@ -5,12 +5,12 @@ import * as Yup from "yup";
 import Map from "../extension/Map";
 import { MapProvider, useMap } from "../extension/useMap";
 import { FaFileUpload } from "react-icons/fa";
-import {addProjectToDB} from "./projectFunctions";
+import { addProjectToDB } from "./projectFunctions";
 
 function AddProject(props) {
   const [clickCords, setClickCords] = useState([0, 0]);
   const [files, setFiles] = useState([]);
-  
+
   const validate = Yup.object({
     name: Yup.string().required("Votre projet doit avoir un nom"),
     description: Yup.string().required(
@@ -26,7 +26,7 @@ function AddProject(props) {
   function handleFile(e) {
     setFiles(e.target.files[0]);
   }
-  
+
   function getCords(e) {
     setClickCords(e);
   }
@@ -34,12 +34,12 @@ function AddProject(props) {
     <Formik
       initialValues={init}
       validationSchema={validate}
-      onSubmit={(values) => addProjectToDB(values, clickCords, files.name )}
+      onSubmit={(values) => addProjectToDB(values, clickCords, files.name)}
     >
       {(formik) => (
         <>
-          <div className="flex flex-col justify-items-center">
-            <h1 className="text-4xl self-center mb-10">Ajouter un projet</h1>
+          <div className="p-4 flex flex-col justify-items-center">
+            
             <Form className="self-center border border-gray-600 rounded-md shadow-md">
               <TextField label="Nom du projet" name="name" type="text" />
 
@@ -48,45 +48,57 @@ function AddProject(props) {
                 name="description"
                 type="text"
               />
-              <div className="text-xl px-4 py-2">
-                <h1>Emplacement du projet : </h1>
-              </div>
+              <div className="m-4 ml-6 p-1 border border-black rounded-lg w-1/3">
+                <div className="text-xl px-4 py-2">
+                  <h1>Emplacement du projet : </h1>
+                </div>
 
-              <div>
-                <h1 className="text-lg m-2 px-7">
-                  Longitude : {clickCords[0].toFixed(5)}
-                </h1>
-                <h1 className="text-lg m-2 px-7">
-                  Latitude : {clickCords[1].toFixed(5)}
-                </h1>
+                <div>
+                  <h1 className="text-lg m-2 px-7">
+                    Longitude : {clickCords[0].toFixed(5)}
+                  </h1>
+                  <h1 className="text-lg m-2 px-7">
+                    Latitude : {clickCords[1].toFixed(5)}
+                  </h1>
+                </div>
               </div>
-              <div className="p-4">
+              <div className="p-4 ml-2">
                 <MapProvider>
                   <Map getLngLat={getCords} />
                 </MapProvider>
               </div>
-              <div className="m-4 flex bg-blue-500 rounded-lg w-1/5">
-                <label
-                  htmlFor="fileSelector"
-                  className="p-4 text-xl text-white  "
-                >
-                  Ajouter un Document
-                </label>
-                <input
-                  type="file"
-                  name="fileInput"
-                  id="fileSelector"
-                  className="hidden"
-                  onChange={handleFile}
-                />
-                <div className="m-4">
-                  <FaFileUpload size={45} color="white" />
+              <div className="flex ml-2">
+                <div className="m-4 flex bg-blue-500 rounded-lg">
+                  <label
+                    htmlFor="fileSelector"
+                    className="p-6 text-xl text-white  "
+                  >
+                    Ajouter un Document
+                  </label>
+                  <input
+                    type="file"
+                    name="fileInput"
+                    id="fileSelector"
+                    className="hidden"
+                    onChange={handleFile}
+                  />
+                  <div className="m-3 pr-1">
+                    <FaFileUpload size={50} color="white" />
+                  </div>
                 </div>
-                <h1 className="p-4 mt-2 text-lg text-blue-800">Fichier à ajouter : {files.name}</h1>
+
+                <div className="flex border m-4 border-black w-1/2 rounded-md">
+                  <h1 className="m-5 text-lg text-gray-600">
+                    {" "}
+                    Fichier à ajouter :{" "}
+                  </h1>
+                  <h1 className="m-5 text-lg text-blue-800">{files.name}</h1>
+                </div>
               </div>
+
               <button
                 type="submit"
-                className="m-4 p-2 text-3xl bg-green-500 text-white rounded-md"
+                className="m-4 ml-6 p-4 text-3xl bg-green-500 text-white rounded-md"
               >
                 Ajouter
               </button>
