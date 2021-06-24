@@ -1,14 +1,14 @@
 import StateBadge from './stateBadge';
-import { useState, useEffect } from 'react';
-import { database, docListen, getDoc, getDocs } from '../../api/firebase';
 
 import CollectorTable from './collectorTable';
 import ActivityTable from './activityTable';
-import firebase from 'firebase';
-import { useProjects } from '../../hook/useProjects';
+
 import IconButton from '../../components/common/iconButton';
 import { FaPlus } from 'react-icons/fa';
 import CollectorModal from './collectorModal';
+import ProjectLogic from './projectLogic';
+
+import ActivityModal from './activityModal';
 
 /**
  *
@@ -16,69 +16,26 @@ import CollectorModal from './collectorModal';
  * @todo Fix problem when collectors of the project is [].
  */
 const Project = ({ match }) => {
-    // const [projectConst] = useProjects().filter((p) => p.docID === match.params.id);
-    const [project, setProject] = useState({});
-    const [collectorModal, setCollectorModal] = useState(false);
-    const addCollector = async ({ response, value }) => {
-        if (response) {
-            const getUserByEmail = database.users.where('email', '==', value);
-            const collector = await getDocs(getUserByEmail);
-            if (
-                collector &&
-                collector[0] &&
-                collector[0].role === 'collecteur' &&
-                collectors.filter((c) => c.docID === collector[0].docID)
-                    .length === 0
-            ) {
-                setCollectors([...collectors, collector[0]]);
-                const updateProject = {
-                    ...project,
-                    collectors: [...project.collectors, collector[0].docID],
-                };
-
-                database.projects.doc(project.docID).set(updateProject);
-            }
-        }
-
-        setCollectorModal(false);
-    };
-
-    const [owner, setOwner] = useState({});
-
-    const [collectors, setCollectors] = useState([]);
-    const [activities, setActivities] = useState([]);
-    useEffect(() => {
-        const projectRef = database.projects.doc(match.params.id);
-
-        return docListen(projectRef, setProject);
-    }, [match.params.id]);
-    useEffect(() => {
-        const load = async () => {
-            const collectorQuery = database.users.where(
-                firebase.firestore.FieldPath.documentId(),
-                'in',
-
-                project.collectors
-            );
-            setCollectors(await getDocs(collectorQuery));
-
-            const activityQuery = database.activities.where(
-                'projectID',
-                '==',
-                project.docID
-            );
-            setActivities(await getDocs(activityQuery));
-
-            const owner = await getDoc(database.users.doc(project.owner));
-            setOwner(owner);
-        };
-        return project && project.collectors && load();
-    }, [project]);
+    const {
+        project,
+        collectors,
+        activities,
+        owner,
+        collectorModal,
+        activityModal,
+        setActivityModal,
+        handleAddActivity,
+        handleAddCollector,
+        setCollectorModal,
+        handleDelete,
+        handleDeleteActivity,
+    } = ProjectLogic(match.params.id);
 
     return project ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            {collectorModal && <CollectorModal emit={addCollector} />}
-            {console.log(project)}
+            {collectorModal && <CollectorModal emit={handleAddCollector} />}
+            {activityModal && <ActivityModal emit={handleAddActivity} />}
+
             <div className="px-4 py-5 sm:px-6">
                 <h3 className="text-lg leading-6 font-bold text-gray-900">
                     Détails du projet
@@ -134,7 +91,11 @@ const Project = ({ match }) => {
                             Budget
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            $120,000
+                            {activities.reduce(
+                                (acc, value) => acc + value.remaining,
+                                0
+                            )}{' '}
+                            DZD
                         </dd>
                     </div>
                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -153,7 +114,6 @@ const Project = ({ match }) => {
                             <ul className="border border-gray-200 rounded-md divide-y divide-gray-200">
                                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                                     <div className="w-0 flex-1 flex items-center">
-                                        {/* <PaperClipIcon className="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" /> */}
                                         <span className="ml-2 flex-1 w-0 truncate">
                                             resume_back_end_developer.pdf
                                         </span>
@@ -169,7 +129,6 @@ const Project = ({ match }) => {
                                 </li>
                                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                                     <div className="w-0 flex-1 flex items-center">
-                                        {/* <PaperClipIcon className="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" /> */}
                                         <span className="ml-2 flex-1 w-0 truncate">
                                             coverletter_back_end_developer.pdf
                                         </span>
@@ -191,7 +150,10 @@ const Project = ({ match }) => {
                             Collecteurs
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex-col space-y-1">
-                            <CollectorTable collectors={collectors} />
+                            <CollectorTable
+                                collectors={collectors}
+                                onDelete={handleDelete}
+                            />
                             <IconButton
                                 className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
                                 onClick={() => setCollectorModal(true)}
@@ -206,8 +168,15 @@ const Project = ({ match }) => {
                             <span>Activitées</span>
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex-col space-y-1">
-                            <ActivityTable activities={activities} />
-                            <IconButton className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center">
+                            <ActivityTable
+                                activities={activities}
+                                onDelete={handleDeleteActivity}
+                            />
+
+                            <IconButton
+                                onClick={() => setActivityModal(true)}
+                                className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
+                            >
                                 <FaPlus />
                             </IconButton>
                         </dd>
