@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { Form, Formik } from "formik";
 import TextField from "./TextField";
 import * as Yup from "yup";
-import app, { database, storage } from "../../api/firebase";
 import Map from "../extension/Map";
 import { MapProvider, useMap } from "../extension/useMap";
 import { FaFileUpload } from "react-icons/fa";
+import {addProjectToDB} from "./projectFunctions";
 
 function AddProject(props) {
   const [clickCords, setClickCords] = useState([0, 0]);
   const [files, setFiles] = useState([]);
+  
   const validate = Yup.object({
     name: Yup.string().required("Votre projet doit avoir un nom"),
     description: Yup.string().required(
@@ -21,33 +22,11 @@ function AddProject(props) {
     name: "",
     description: "",
   };
+
   function handleFile(e) {
     setFiles(e.target.files[0]);
-    console.log(files);
   }
-  function addProjectToDB({ values, clickCords }) {
-    console.log(values);
-    console.log(files.name);
-    database.projects
-      .add({
-        name: values.name,
-        description: values.description,
-        clickCords,
-      })
-      .then(uploadFile(files.name))
-      .catch((e) => window.alert(`Erreur ${e}`));
-  }
-
-  function uploadFile(fileName,owner) {
-    owner ="hamza"; //test purpose, use the ID of the project owner to create separate spaces in cloud storage
-    const cloudStorage = storage.ref();
-    console.log(cloudStorage);
-    const fileRef = cloudStorage.child(owner).child(fileName);
-    fileRef
-      .put(fileName)
-      .then(() => console.log("added a file successfully"))
-      .catch((e) => console.log("failed to add file : " + e));
-  }
+  
   function getCords(e) {
     setClickCords(e);
   }
@@ -55,7 +34,7 @@ function AddProject(props) {
     <Formik
       initialValues={init}
       validationSchema={validate}
-      onSubmit={(values) => addProjectToDB({ values, clickCords })}
+      onSubmit={(values) => addProjectToDB(values, clickCords, files.name )}
     >
       {(formik) => (
         <>
