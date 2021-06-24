@@ -1,93 +1,61 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Form, Formik } from "formik";
 import TextField from "./TextField";
 import * as Yup from "yup";
-import { database } from "../../api/firebase";
-import Activity from "./ActivityForm";
-import { date } from "yup/lib/locale";
+import app, { database, storage } from "../../api/firebase";
+import Map from "../extension/Map";
+import { MapProvider, useMap } from "../extension/useMap";
+import { FaFileUpload } from "react-icons/fa";
 
 function AddProject(props) {
-
+  const [clickCords, setClickCords] = useState([0, 0]);
+  const [files, setFiles] = useState([]);
   const validate = Yup.object({
     name: Yup.string().required("Votre projet doit avoir un nom"),
     description: Yup.string().required(
       "Votre projet doit avoir une description"
     ),
-    startDate1: Yup.date().required().max(Yup.ref('endDate1'),"Impossible !"),
-    startDate2: Yup.date().required().max(Yup.ref('endDate2'),"Impossible !"),
-    startDate3: Yup.date().required().max(Yup.ref('endDate3'),"Impossible !"),
-    endDate1: Yup.date().required().min(Yup.ref('startDate1'),"Impossible !"),
-    endDate2:  Yup.date().required().min(Yup.ref('startDate2'),"Impossible !"),
-    endDate3:  Yup.date().required().min(Yup.ref('startDate3'),"Impossible !"),
   });
-  
-  const [validationSchema, setValidationSchema] = useState(Yup.object({
-    object1: Yup.string().required("Objet requis"),
-    quantity1: Yup.number()
-      .typeError("doit etre un nombre")
-      .required("Quantité requise"),
-    importance1: Yup.number()
-      .typeError("doit etre un nombre")
-      .required("Importance requise"),
-    }).concat(validate));
 
-  const [initActivityValues,setInitActivityValues] = useState({
-    object11:"",
-    quantity11:0,
-    importance11:0,
-    startDate1:new Date(),
-    startDate2:new Date(),
-    startDate3:new Date(),
-    endDate1:new Date(),
-    endDate2:new Date(),
-    endDate3:new Date(),
-  })
-
-  
-
-
-  function addProjectToDB({ name, description, budget }) {
+  const init = {
+    name: "",
+    description: "",
+  };
+  function handleFile(e) {
+    setFiles(e.target.files[0]);
+    console.log(files);
+  }
+  function addProjectToDB({ values, clickCords }) {
+    console.log(values);
+    console.log(files.name);
     database.projects
       .add({
-        name,
-        description,
+        name: values.name,
+        description: values.description,
+        clickCords,
       })
-      .then(window.alert("ajouté !"))
+      .then(uploadFile(files.name))
       .catch((e) => window.alert(`Erreur ${e}`));
   }
 
-  const  changeValidators = (activityNumber,value)=> {
-
-
-    let initTemp = {};
-    for (let index = 1; index <= value; index++) {
-        initTemp[`object${activityNumber}${index}`] = "";
-        initTemp[`quantity${activityNumber}${index}`] = 0;
-        initTemp[`importance${activityNumber}${index}`] = 0;
-    }
-
-    const valSchemaTemp = {};
-
-    for (let index = 1; index <= value; index++) {
-      valSchemaTemp[`object${activityNumber}${index}`] = Yup.string().required("Objet requis");
-      valSchemaTemp[`quantity${activityNumber}${index}`] =  Yup.number()
-        .typeError("doit etre un nombre")
-        .required("Quantité requise");
-        valSchemaTemp[`importance${activityNumber}${index}`] =Yup.number()
-        .typeError("doit etre un nombre")
-        .required("Importance requise");
-      };  
-    
-    setInitActivityValues(initTemp);
-    setValidationSchema(Yup.object(valSchemaTemp).concat(validate));
-    
+  function uploadFile(fileName,owner) {
+    owner ="hamza"; //test purpose, use the ID of the project owner to create separate spaces in cloud storage
+    const cloudStorage = storage.ref();
+    console.log(cloudStorage);
+    const fileRef = cloudStorage.child(owner).child(fileName);
+    fileRef
+      .put(fileName)
+      .then(() => console.log("added a file successfully"))
+      .catch((e) => console.log("failed to add file : " + e));
   }
-
+  function getCords(e) {
+    setClickCords(e);
+  }
   return (
     <Formik
-      initialValues={initActivityValues}
-      validationSchema={validationSchema}
-      onSubmit={(values) => addProjectToDB(values)}
+      initialValues={init}
+      validationSchema={validate}
+      onSubmit={(values) => addProjectToDB({ values, clickCords })}
     >
       {(formik) => (
         <>
@@ -101,27 +69,48 @@ function AddProject(props) {
                 name="description"
                 type="text"
               />
+              <div className="text-xl px-4 py-2">
+                <h1>Emplacement du projet : </h1>
+              </div>
 
-              <h1 className="text-2xl px-7">Activités</h1>
-              <br/>
-              {}
-              <h1 className="text-xl px-8">1ere activité</h1>
-              <Activity activityNumber="1" handleChange={changeValidators}  form={formik} />
-              
-              <h1 className="text-xl px-8">1ere activité</h1>
-              <Activity activityNumber="2" handleChange={changeValidators}  form={formik} />
-              
-              <h1 className="text-xl px-8">3eme activité</h1>
-              <Activity activityNumber="3" handleChange={changeValidators}  form={formik} />
-
+              <div>
+                <h1 className="text-lg m-2 px-7">
+                  Longitude : {clickCords[0].toFixed(5)}
+                </h1>
+                <h1 className="text-lg m-2 px-7">
+                  Latitude : {clickCords[1].toFixed(5)}
+                </h1>
+              </div>
+              <div className="p-4">
+                <MapProvider>
+                  <Map getLngLat={getCords} />
+                </MapProvider>
+              </div>
+              <div className="m-4 flex bg-blue-500 rounded-lg w-1/5">
+                <label
+                  htmlFor="fileSelector"
+                  className="p-4 text-xl text-white  "
+                >
+                  Ajouter un Document
+                </label>
+                <input
+                  type="file"
+                  name="fileInput"
+                  id="fileSelector"
+                  className="hidden"
+                  onChange={handleFile}
+                />
+                <div className="m-4">
+                  <FaFileUpload size={45} color="white" />
+                </div>
+                <h1 className="p-4 mt-2 text-lg text-blue-800">Fichier à ajouter : {files.name}</h1>
+              </div>
               <button
-                className="m-4 p-3 text-white bg-blue-500 rounded-lg"
                 type="submit"
+                className="m-4 p-2 text-3xl bg-green-500 text-white rounded-md"
               >
                 Ajouter
-                {console.log(formik.values)}
               </button>
-              
             </Form>
           </div>
         </>
