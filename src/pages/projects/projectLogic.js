@@ -1,13 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { database, getDocs, getDoc } from '../../api/firebase';
+import {
+    calculateActivityPercentage,
+    calculateActivityTimePercentage,
+} from './activity';
 import firebase from 'firebase';
+
 /**
  *
  *
  * @todo Clean up of facturess after delete of activity.
  */
+const calculateActivityWork = (activity) => {
+    if (activity.state === 'Done') {
+        return 100;
+    } else
+        return (
+            calculateActivityPercentage(activity) -
+            calculateActivityTimePercentage(activity)
+        );
+};
 const ProjectLogic = (projectID) => {
     const [project, setProject] = useState({});
+    const [dataLoaded, setDataLoaded] = useState(false);
+    const [work, setWork] = useState(0);
     const [owner, setOwner] = useState({});
     const [activityModal, setActivityModal] = useState(false);
     const [collectors, setCollectors] = useState([]);
@@ -43,8 +59,34 @@ const ProjectLogic = (projectID) => {
     };
 
     useEffect(() => {
-        return load();
+        load();
     }, []);
+
+    // useEffect(() => {
+    //     return async () => {
+    //         // const p = await database.projects
+    //         //     .doc(projectID)
+    //         //     .set({ ...project, work });
+    //         console.log(project);
+    //     };
+    // }, [projectID]);
+
+    useEffect(() => {
+        if (activities.length === 0) setWork(0);
+        else {
+            const total = activities.reduce(
+                (acc, activity) => acc + calculateActivityWork(activity),
+                0
+            );
+            setWork(total / activities.length);
+        }
+    }, [activities]);
+    useEffect(() => {
+        if (Object.keys(project).length > 0) {
+            const { docID, ...p } = project;
+            database.projects.doc(projectID).set({ ...p, work });
+        }
+    }, [work]);
 
     const updateCollectors = (collectors) => {
         setCollectors(collectors);
@@ -84,15 +126,15 @@ const ProjectLogic = (projectID) => {
     };
 
     const handleAddActivity = async ({ response, value }) => {
-        const activity = {
-            state: 'Not started',
-            projectID,
-            phase: activities.length + 1,
-            percentage: 0,
-            remaining: value.budget,
-            ...value,
-        };
         if (response) {
+            const activity = {
+                state: 'Not started',
+                projectID,
+                phase: activities.length + 1,
+                percentage: 0,
+                remaining: value.budget,
+                ...value,
+            };
             const { id } = await database.activities.add(activity);
 
             setActivities([...activities, { ...activity, docID: id }]);
@@ -108,6 +150,7 @@ const ProjectLogic = (projectID) => {
 
     return {
         project,
+        work,
         collectors,
         activities,
         owner,

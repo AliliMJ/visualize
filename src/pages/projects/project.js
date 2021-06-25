@@ -29,6 +29,7 @@ const Project = ({ match }) => {
         setCollectorModal,
         handleDelete,
         handleDeleteActivity,
+        work,
     } = ProjectLogic(match.params.id);
 
     return project ? (
@@ -83,7 +84,7 @@ const Project = ({ match }) => {
                             Etat
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            <StateBadge state={project.state} />
+                            <StateBadge degree={work} />
                         </dd>
                     </div>
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

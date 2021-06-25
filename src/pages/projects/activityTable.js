@@ -27,7 +27,8 @@ const ActivityTable = ({ activities, onDelete }) => {
                 accessor: 'phase',
                 Cell: ({ row }) => (
                     <span className="text-gray-400">
-                        {row.original.phase} / {activities.length}
+                        {activities.indexOf(row.original) + 1} /{' '}
+                        {activities.length}
                     </span>
                 ),
             },

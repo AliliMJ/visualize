@@ -16,10 +16,44 @@ import { useHistory } from 'react-router';
 
 import FactureTable from './factureTable';
 import { useInfo } from '../../hook/useInfo';
-const difference = (expected, actual) => {
+const difference = ({ expected, actual }) => {
     actual = actual ?? 0;
     expected = expected ?? 0;
     return { diff: Math.abs(expected - actual), max: expected };
+};
+export const calculateActivityPercentage = ({ actual, expected }) => {
+    if (expected === null || expected === undefined) return 100;
+    if (actual === null || actual === undefined) return 0;
+    let sigma = 0;
+    let max_sigma = 0;
+    console.log(actual, expected);
+    actual = actual ?? {};
+    for (let [key, value] of Object.entries(expected)) {
+        const { diff, max } = difference({
+            expected: value,
+            actual: actual[key],
+        });
+        max_sigma += max;
+        sigma += diff;
+    }
+    return Math.round((1 - sigma / max_sigma) * 100);
+};
+const calculateRemainingPercentage = ({ remaining, budget }) => {
+    if (remaining === undefined || budget === undefined || remaining < 0)
+        return 0;
+    if (remaining === 0) return 0;
+    if (remaining > budget) return 100;
+
+    return Math.round((100 * remaining) / budget);
+};
+export const calculateActivityTimePercentage = (activity) => {
+    const date = new Date(activity.date);
+    const now = new Date();
+    const diffDays = Math.ceil((now - date) / (1000 * 60 * 60 * 24));
+    const percentage = Math.round((100 * diffDays) / activity.delai);
+    if (percentage >= 0 && percentage <= 100) return percentage;
+    if (percentage > 100) return 100;
+    return 0;
 };
 
 const Activity = ({ match }) => {
@@ -27,47 +61,23 @@ const Activity = ({ match }) => {
     const [activity, setActivity] = useState({});
     const [factures, setFactures] = useState([]);
     const [timeLeftPercentage, setTimeLeftPercentage] = useState(0);
-    const [costPercentage, setCostPercentage] = useState(0);
+    const [remainingPercentage, setRemainingPercentage] = useState(0);
     const history = useHistory();
 
-    const budgetPercentage = useCallback(() => {
-        if (activity.budget === 0 || !activity.budget) return 100;
-        const totalCost = -factures.reduce(
-            (acc, value) => acc + value.amount,
-            0
-        );
+    // const budgetPercentage = useCallback(() => {
+    //     if (activity.budget === 0 || !activity.budget) return 100;
+    //     const totalCost = -factures.reduce(
+    //         (acc, value) => acc + value.amount,
+    //         0
+    //     );
 
-        if (totalCost >= 0 && totalCost <= activity.budget) {
-            return Math.round((100 * totalCost) / activity.budget);
-        }
-        if (totalCost > activity.budget) return 100;
-        if (totalCost < activity.budget) return 0;
-    }, [activity.budget, factures]);
-    const timePercentage = useCallback(() => {
-        const date = new Date(activity.date);
-        const now = new Date();
-        const diffDays = Math.ceil((now - date) / (1000 * 60 * 60 * 24));
-        const percentage = Math.round((100 * diffDays) / activity.delai);
-        if (percentage >= 0 && percentage <= 100) return percentage;
-        if (percentage > 100) return 100;
-        return 0;
-    }, [activity.date, activity.delai]);
+    //     if (totalCost >= 0 && totalCost <= activity.budget) {
+    //         return Math.round((100 * totalCost) / activity.budget);
+    //     }
+    //     if (totalCost > activity.budget) return 100;
+    //     if (totalCost < activity.budget) return 0;
+    // }, [activity.budget, factures]);
 
-    const activityPercentage = () => {
-        let { expected, actual } = activity;
-        if (expected === null || expected === undefined) return 100;
-        if (actual === null || actual === undefined) return 0;
-        let sigma = 0;
-        let max_sigma = 0;
-
-        actual = actual ?? {};
-        for (let [key, value] of Object.entries(expected)) {
-            const { diff, max } = difference(value, actual[key]);
-            max_sigma += max;
-            sigma += diff;
-        }
-        return Math.round((1 - sigma / max_sigma) * 100);
-    };
     const onAdd = ({ new_value }) => {
         const new_activity = { ...activity };
         new_activity.actual = { ...new_activity.actual, ...new_value };
@@ -77,12 +87,12 @@ const Activity = ({ match }) => {
     const onEdit = (data, obj) => {
         const new_activity = { ...activity };
         new_activity[obj][data.name] = data.new_value;
-        new_activity.percentage = activityPercentage();
+        new_activity.percentage = calculateActivityPercentage(activity);
         setActivity(new_activity);
     };
     const validate = async () => {
         const new_activity = { ...activity };
-        activity.percentage = activityPercentage(activity);
+        activity.percentage = calculateActivityPercentage(activity);
         setActivity(new_activity);
         await database.activities.doc(match.params.id).set(activity);
         back();
@@ -91,11 +101,18 @@ const Activity = ({ match }) => {
         history.push(`/projects/${activity.projectID}`);
     };
 
-    useEffect(() => setCostPercentage(budgetPercentage()), [budgetPercentage]);
-
+    //useEffect(() => setCostPercentage(budgetPercentage()), [budgetPercentage]);
     useEffect(() => {
-        setTimeLeftPercentage(timePercentage());
-    }, [timePercentage]);
+        setRemainingPercentage(
+            calculateRemainingPercentage({
+                remaining: activity.remaining,
+                budget: activity.budget,
+            })
+        );
+    }, [activity.remaining, activity.budget]);
+    useEffect(() => {
+        setTimeLeftPercentage(calculateActivityTimePercentage(activity));
+    }, [activity.date, activity.delai]);
     useEffect(() => {
         const load = async () => {
             const activityRef = database.activities.doc(match.params.id);
@@ -184,12 +201,12 @@ const Activity = ({ match }) => {
                         </div>
                     </div>
                     <div className="flex flex-col  justify-center items-center space-x-2">
-                        <div className="text-gray-400">Coût </div>
+                        <div className="text-gray-400">Budget Restant </div>
                         <div>
                             <CircularProgressbar
                                 className="h-20 w-20"
-                                value={costPercentage}
-                                text={`${costPercentage}%`}
+                                value={remainingPercentage}
+                                text={`${remainingPercentage}%`}
                             />
                         </div>
                     </div>
