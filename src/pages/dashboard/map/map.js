@@ -33,7 +33,6 @@ function Position({ x, y }) {
 function Map() {
     const {
         lngLat,
-
         viewport,
         setViewport,
         changeMarkerPos,

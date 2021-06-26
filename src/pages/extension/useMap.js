@@ -2,11 +2,7 @@ import { createContext, useContext, useState } from 'react';
 
 const ContextMap = createContext();
 
-export const useMap = () => {
-  return useContext(ContextMap);
-};
-
-export const Map = ({ children }) => {
+export const MapProvider = ({ children }) => {
   const [lngLat, setLngLat] = useState([0, 0]);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [viewport, setViewport] = useState({
@@ -19,6 +15,8 @@ export const Map = ({ children }) => {
   function changeMarkerPos([x, y]) {
     setLngLat([x, y]);
   }
+
+  
 
   function changeMousePos([x, y]) {
     const deciamls = 4;
@@ -38,4 +36,8 @@ export const Map = ({ children }) => {
     changeMousePos,
   };
   return <ContextMap.Provider value={value}>{children}</ContextMap.Provider>;
+};
+
+export const useMap = () => {
+  return useContext(ContextMap);
 };

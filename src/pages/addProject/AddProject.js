@@ -1,89 +1,37 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Form, Formik } from "formik";
 import TextField from "./TextField";
 import * as Yup from "yup";
-import { database } from "../../api/firebase";
-import Activity from "./ActivityForm";
-import { date } from "yup/lib/locale";
+import Map from "../extension/Map";
+import { MapProvider, useMap } from "../extension/useMap";
+import { FaFileUpload } from "react-icons/fa";
+import { addProjectToDB } from "./projectFunctions";
 
 function AddProject(props) {
+  const [clickCords, setClickCords] = useState([0, 0]);
+  const [files, setFiles] = useState([]);
 
   const validate = Yup.object({
     name: Yup.string().required("Votre projet doit avoir un nom"),
     description: Yup.string().required(
       "Votre projet doit avoir une description"
     ),
-    startDate1: Yup.date().required().max(Yup.ref('endDate1'),"Impossible !"),
-    startDate2: Yup.date().required().max(Yup.ref('endDate2'),"Impossible !"),
-    startDate3: Yup.date().required().max(Yup.ref('endDate3'),"Impossible !"),
-    endDate1: Yup.date().required().min(Yup.ref('startDate1'),"Impossible !"),
-    endDate2:  Yup.date().required().min(Yup.ref('startDate2'),"Impossible !"),
-    endDate3:  Yup.date().required().min(Yup.ref('startDate3'),"Impossible !"),
   });
-  
-  const [validationSchema, setValidationSchema] = useState(Yup.object({
-    object1: Yup.string().required("Objet requis"),
-    quantity1: Yup.number()
-      .typeError("doit etre un nombre")
-      .required("Quantité requise"),
-    importance1: Yup.number()
-      .typeError("doit etre un nombre")
-      .required("Importance requise"),
-    }).concat(validate));
 
-  const [initActivityValues,setInitActivityValues] = useState({
-    object11:"",
-    quantity11:0,
-    importance11:0,
-    startDate1:new Date(),
-    startDate2:new Date(),
-    startDate3:new Date(),
-    endDate1:new Date(),
-    endDate2:new Date(),
-    endDate3:new Date(),
-  })
+  const init = {
+    name: "",
+    description: "",
+  };
 
-  
-
-
-  function addProjectToDB({ name, description, budget }) {
-    database.projects
-      .add({
-        name,
-        description,
-      })
-      .then(window.alert("ajouté !"))
-      .catch((e) => window.alert(`Erreur ${e}`));
+  function handleFile(e) {
+    setFiles(e.target.files[0]);
   }
 
-  const  changeValidators = (activityNumber,value)=> {
-
-
-    let initTemp = {};
-    for (let index = 1; index <= value; index++) {
-        initTemp[`object${activityNumber}${index}`] = "";
-        initTemp[`quantity${activityNumber}${index}`] = 0;
-        initTemp[`importance${activityNumber}${index}`] = 0;
-    }
-
-    const valSchemaTemp = {};
-
-    for (let index = 1; index <= value; index++) {
-      valSchemaTemp[`object${activityNumber}${index}`] = Yup.string().required("Objet requis");
-      valSchemaTemp[`quantity${activityNumber}${index}`] =  Yup.number()
-        .typeError("doit etre un nombre")
-        .required("Quantité requise");
-        valSchemaTemp[`importance${activityNumber}${index}`] =Yup.number()
-        .typeError("doit etre un nombre")
-        .required("Importance requise");
-      };  
-    
-    setInitActivityValues(initTemp);
-    setValidationSchema(Yup.object(valSchemaTemp).concat(validate));
-    
+  function getCords(e) {
+    setClickCords(e);
   }
-
   return (
+<<<<<<< HEAD
     <Formik
       initialValues={initActivityValues}
       validationSchema={validationSchema}
@@ -127,6 +75,85 @@ function AddProject(props) {
         </>
       )}
     </Formik>
+=======
+    <div className="bg-blue-500 w-full h-full">
+      <Formik
+        initialValues={init}
+        validationSchema={validate}
+        onSubmit={(values) => addProjectToDB(values, clickCords, files.name)}
+      >
+        {(formik) => (
+          <>
+            <div className="p-4 bg-white flex flex-col justify-items-center">
+              <Form className="self-center border border-gray-600 rounded-md shadow-md">
+                <TextField label="Nom du projet" name="name" type="text" />
+
+                <TextField
+                  label="Description du projet"
+                  name="description"
+                  type="text"
+                />
+                <div className="m-4 ml-6 p-1 border border-black rounded-lg  shadow-md w-1/3">
+                  <div className="text-xl px-4 py-2">
+                    <h1 className="font-bold text-gray-500">Emplacement du projet : </h1>
+                  </div>
+
+                  <div>
+                    <h1 className="text-lg m-2 px-7">
+                      Longitude : {clickCords[0].toFixed(5)}° E
+                    </h1>
+                    <h1 className="text-lg m-2 px-7">
+                      Latitude : {clickCords[1].toFixed(5)}° N
+                    </h1>
+                  </div>
+                </div>
+                <div className="p-4 ml-2">
+                  <MapProvider>
+                    <Map getLngLat={getCords} />
+                  </MapProvider>
+                </div>
+                <div className="flex ml-2">
+                  <div className="m-4 flex bg-blue-500 rounded-lg">
+                    <label
+                      htmlFor="fileSelector"
+                      className="p-6 text-xl text-white  "
+                    >
+                      Ajouter un Document
+                    </label>
+                    <input
+                      type="file"
+                      name="fileInput"
+                      id="fileSelector"
+                      className="hidden"
+                      onChange={handleFile}
+                    />
+                    <div className="m-3 pr-1">
+                      <FaFileUpload size={50} color="white" />
+                    </div>
+                  </div>
+
+                  <div className="flex border m-4 border-black w-1/2 rounded-md  shadow-md">
+                    <h1 className="m-5 text-lg font-bold text-gray-500">
+                      {" "}
+                      Fichier à ajouter :{" "}
+                    </h1>
+                    <h1 className="m-5 text-lg text-blue-800">{files.name}</h1>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="m-4 ml-6 p-4 text-3xl bg-green-500 text-white rounded-md"
+                >
+                  Ajouter
+                </button>
+              </Form>
+            </div>
+          </>
+        )}
+      </Formik>
+    </div>
+>>>>>>> hamza_branch
   );
 }
 
