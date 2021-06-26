@@ -64,7 +64,7 @@ function Map() {
                     />
                 </ReactMapGl>
             </div>
-            <div className="p-3 w-64 w-max border rounded flex flex-col flex-grow">
+            <div className="p-3 w-max border rounded flex flex-col flex-grow">
                 <div className="font-bold text-gray-400">Details</div>
             </div>
         </div>

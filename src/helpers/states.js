@@ -1,15 +1,17 @@
 const remarques = { bad: 'En retard', medium: 'Moyen', good: 'Bon' };
 
-const classes = {
-    bad: 'bg-red-400',
-    medium: 'bg-yellow-400',
-    good: 'bg-green-400',
+export const getRemarque = (degree) => {
+    if (degree < -50) return 'En retard';
+    if (degree >= -50 && degree < 0) return 'Légerement en retard';
+    if (degree >= 0 && degree < 50) return 'Moyen';
+    return 'Avancé';
 };
 
-export const getRemarque = (state) => {
-    return remarques[state];
-};
-
-export const getClass = (state) => {
-    return classes[state];
+export const getClass = (degree) => {
+    return {
+        'bg-red-400': degree < -50,
+        'bg-yellow-500': degree >= -50 && degree < 0,
+        'bg-yellow-300': degree >= 0 && degree < 50,
+        'bg-green-400': degree >= 50,
+    };
 };
