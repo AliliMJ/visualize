@@ -6,7 +6,7 @@ import { AuthProvider } from './hook/useAuth';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PrivateRoute from './components/privateRoute';
 import Dashboard from './pages/dashboard';
-import { Map } from './hook/useMap';
+import { MapProvider } from './hook/useMap';
 import Project from './pages/projects/project';
 import Activity from './pages/projects/activity';
 
@@ -19,7 +19,7 @@ function App() {
                         <Route exact path="/" component={Welcome} />
                         <Route path="/register" component={Register} />
                         <Route path="/login" component={Login} />
-                        <Map>
+                        <MapProvider>
                             <PrivateRoute
                                 path="/dashboard"
                                 component={Dashboard}
@@ -33,7 +33,7 @@ function App() {
                                 path="/activities/:id"
                                 component={Activity}
                             />
-                        </Map>
+                        </MapProvider>
                     </Switch>
                 </AuthProvider>
             </Router>

@@ -6,7 +6,7 @@ export const useMap = () => {
   return useContext(ContextMap);
 };
 
-export const Map = ({ children }) => {
+export const MapProvider = ({ children }) => {
   const [lngLat, setLngLat] = useState([0, 0]);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [viewport, setViewport] = useState({
