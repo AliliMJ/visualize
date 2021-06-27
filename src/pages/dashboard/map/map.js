@@ -1,42 +1,12 @@
 import React, { useContext, useRef } from 'react';
 import ReactMapGl, { MapContext } from 'react-map-gl';
-import { BiLocationPlus } from 'react-icons/bi';
-import {FiCrosshair} from 'react-icons/fi'
 import { useMap } from '../../../hook/useMap';
 import Geocoder from 'react-map-gl-geocoder';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
-
-
-
+import Marker from './Marker';
 
 const MAPBOX_TOKEN =
     'pk.eyJ1IjoiaGFtemFmZWdob3VsaSIsImEiOiJja3BucnJ5dTgwdjMyMnFxcTJzYm91emF3In0.ReNmWwsDL-3jWvogomg7Lg';
-
-
-
-export function Marker({ longitude, latitude, markerType}) {
-
-        const markers = {
-            add : function () {
-                return <BiLocationPlus size={30}/>
-            },
-            display : function() {
-                return <FiCrosshair size={30}/>
-            }
-        }
-        
-        const context = useContext(MapContext);
-
-    const [x, y] = context.viewport.project([longitude, latitude]);
-    const markerPosition = { left: x - 15, top: y - 30 };
-
-    return (
-        <button className="absolute text-blue-500" style={markerPosition}>
-            {/* size = top, size=2*left */}
-           {markers[markerType]()}
-        </button>
-    );
-}
 
 function Position({ x, y }) {
     return (
@@ -47,7 +17,7 @@ function Position({ x, y }) {
     );
 }
 
-function Map() {
+function Map(markers) {
     const {
         lngLat,
         viewport,

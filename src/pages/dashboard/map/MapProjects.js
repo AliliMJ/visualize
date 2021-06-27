@@ -7,7 +7,7 @@ function MapProjects(props) {
     return (
         <div>
             <MapProvider>
-                <Map markerType="add"/>
+                <Map />
             </MapProvider>
         </div>
     );
