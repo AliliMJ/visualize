@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from 'react';
 const ContextMap = createContext();
 
 export const useMap = () => {
+  console.log(ContextMap);
   return useContext(ContextMap);
 };
 
@@ -12,10 +13,11 @@ export const MapProvider = ({ children }) => {
   const [viewport, setViewport] = useState({
     width: 800,
     height: 500,
-    latitude: 37.7577,
-    longitude: -122.4376,
+    latitude: 1.7577,
+    longitude: 35.4376,
     zoom: 8,
   });
+
   function changeMarkerPos([x, y]) {
     setLngLat([x, y]);
   }

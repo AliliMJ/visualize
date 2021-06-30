@@ -4,6 +4,7 @@ import { BiLocationPlus } from "react-icons/bi";
 import { useMap } from "./useMap";
 import Geocoder from "react-map-gl-geocoder";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
+// import Marker from "../dashboard/map/Marker";
 
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiaGFtemFmZWdob3VsaSIsImEiOiJja3BucnJ5dTgwdjMyMnFxcTJzYm91emF3In0.ReNmWwsDL-3jWvogomg7Lg";

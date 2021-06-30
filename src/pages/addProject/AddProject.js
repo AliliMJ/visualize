@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import TextField from "./TextField";
 import * as Yup from "yup";
 import Map from "../extension/Map";
-import { MapProvider, useMap } from "../extension/useMap";
+import { MapProvider } from "../extension/useMap";
 import { FaFileUpload } from "react-icons/fa";
 import { addProjectToDB } from "./projectFunctions";
 

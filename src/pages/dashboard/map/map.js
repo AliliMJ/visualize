@@ -4,6 +4,7 @@ import { useMap } from '../../../hook/useMap';
 import Geocoder from 'react-map-gl-geocoder';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import Marker from './Marker';
+import {Markers} from "./mapProjectLogic";
 
 const MAPBOX_TOKEN =
     'pk.eyJ1IjoiaGFtemFmZWdob3VsaSIsImEiOiJja3BucnJ5dTgwdjMyMnFxcTJzYm91emF3In0.ReNmWwsDL-3jWvogomg7Lg';
@@ -17,7 +18,26 @@ function Position({ x, y }) {
     );
 }
 
-function Map(markers) {
+function Map({displayProjects}) {
+    const projects = [
+        {
+            name:"Université",
+            state:"red",
+        },
+        {
+            name:"Morgue",
+            state:"red",
+        },
+        {
+            name:"Cimetiere",
+            state:"red",
+        },
+        {
+            name:"Hopital",
+            state:"red",
+        },
+    ]
+
     const {
         lngLat,
         viewport,
@@ -40,7 +60,9 @@ function Map(markers) {
                     onClick={(e) => changeMarkerPos(e.lngLat)}
                     onMouseMove={(e) => changeMousePos(e.lngLat)}
                 >
-                    <Marker longitude={lngLat[0]} latitude={lngLat[1]} markerType="add" />
+                    {
+                        displayProjects ? <Markers/> : <Marker longitude={lngLat[0]} latitude={lngLat[1]} markerType="add" />
+                    }
                     <Geocoder
                         mapRef={mapRef}
                         onViewportChange={(nextViewport) =>
