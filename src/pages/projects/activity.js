@@ -22,20 +22,25 @@ const difference = ({ expected, actual }) => {
     return { diff: Math.abs(expected - actual), max: expected };
 };
 export const calculateActivityPercentage = ({ actual, expected }) => {
-    if (expected === null || expected === undefined) return 100;
+    if (expected === null || expected === undefined) return 0;
     if (actual === null || actual === undefined) return 0;
+    if (Object.keys(actual).length === 0 || Object.keys(expected).length === 0)
+        return 0;
     let sigma = 0;
     let max_sigma = 0;
-    console.log(actual, expected);
+    //console.log(actual, expected);
     actual = actual ?? {};
     for (let [key, value] of Object.entries(expected)) {
-        const { diff, max } = difference({
-            expected: value,
-            actual: actual[key],
-        });
-        max_sigma += max;
-        sigma += diff;
+        if (typeof value === 'number') {
+            const { diff, max } = difference({
+                expected: value,
+                actual: actual[key],
+            });
+            max_sigma += max;
+            sigma += diff;
+        }
     }
+    //console.log('activity', Math.round((1 - sigma / max_sigma) * 100));
     return Math.round((1 - sigma / max_sigma) * 100);
 };
 const calculateRemainingPercentage = ({ remaining, budget }) => {
@@ -93,6 +98,7 @@ const Activity = ({ match }) => {
     const validate = async () => {
         const new_activity = { ...activity };
         activity.percentage = calculateActivityPercentage(activity);
+        console.log('updating activity : percentage', activity.percentage);
         setActivity(new_activity);
         await database.activities.doc(match.params.id).set(activity);
         back();

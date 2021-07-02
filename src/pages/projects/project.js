@@ -83,8 +83,11 @@ const Project = ({ match }) => {
                         <dt className="text-sm font-medium text-gray-500">
                             Etat
                         </dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 space-x-5 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                             <StateBadge degree={work} />
+                            <span className="text-gray-500">
+                                ~{(work + 100) / 2}%
+                            </span>
                         </dd>
                     </div>
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

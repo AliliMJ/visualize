@@ -86,6 +86,7 @@ const ProjectLogic = (projectID) => {
             const { docID, ...p } = project;
             database.projects.doc(projectID).set({ ...p, work });
         }
+        console.log(work);
     }, [work]);
 
     const updateCollectors = (collectors) => {
