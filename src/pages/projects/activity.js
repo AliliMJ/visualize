@@ -22,8 +22,10 @@ const difference = ({ expected, actual }) => {
     return { diff: Math.abs(expected - actual), max: expected };
 };
 export const calculateActivityPercentage = ({ actual, expected }) => {
-    if (expected === null || expected === undefined) return 100;
+    if (expected === null || expected === undefined) return 0;
     if (actual === null || actual === undefined) return 0;
+    if (Object.keys(expected).length === 0 || Object.keys(actual).length === 0)
+        return 0;
     let sigma = 0;
     let max_sigma = 0;
     console.log(actual, expected);
