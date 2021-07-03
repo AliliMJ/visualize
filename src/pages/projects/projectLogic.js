@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { database, getDocs, getDoc } from '../../api/firebase';
 import {
     calculateActivityPercentage,
@@ -22,7 +22,7 @@ const calculateActivityWork = (activity) => {
 };
 const ProjectLogic = (projectID) => {
     const [project, setProject] = useState({});
-    const [dataLoaded, setDataLoaded] = useState(false);
+
     const [work, setWork] = useState(0);
     const [owner, setOwner] = useState({});
     const [activityModal, setActivityModal] = useState(false);
