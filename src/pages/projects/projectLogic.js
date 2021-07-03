@@ -29,6 +29,7 @@ const ProjectLogic = (projectID) => {
     const [collectors, setCollectors] = useState([]);
     const [activities, setActivities] = useState([]);
     const [collectorModal, setCollectorModal] = useState(false);
+    
     const loadCollectors = async (collectorsID) => {
         if (collectorsID.length > 0) {
             const collectorQuery = database.users.where(

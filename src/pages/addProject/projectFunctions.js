@@ -1,15 +1,16 @@
 import app, { database, storage,auth } from "../../api/firebase";
 
-
-export const  addProjectToDB = ( values, clickCords, fileName) => {
-    const owner = auth.currentUser.email;
+export const  addProjectToDB = ( user, values, cords, fileName, history) => {
     database.projects
       .add({
-        name: values.name,
+        owner:user.uid,
+        title: values.name,
         description: values.description,
-        clickCords,
+        cords,
+        work: 0,
+        collectors :[]
       })
-      .then(uploadFile(values.name,fileName,owner))
+      .then(p => uploadFile(values.name,fileName,user.uid)).then(()=>history.push("/dashboard"))
       .catch((e) => window.alert(`Erreur ${e}`));
   }
 
@@ -18,8 +19,7 @@ const uploadFile = (projectName,fileName,owner) =>{
     const cloudStorage = storage.ref();
     console.log(cloudStorage);
     const fileRef = cloudStorage.child(owner).child(projectName).child(fileName);
-    fileRef
+    return fileRef
       .put(fileName)
-      .then(() => console.log("added a file successfully"))
-      .catch((e) => console.log("failed to add file : " + e));
+      
   }

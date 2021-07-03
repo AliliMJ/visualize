@@ -18,6 +18,7 @@ export const Map = ({ children }) => {
   });
   function changeMarkerPos([x, y]) {
     setLngLat([x, y]);
+    return [x, y];
   }
 
   function changeMousePos([x, y]) {
@@ -35,7 +36,7 @@ export const Map = ({ children }) => {
     viewport,
     setViewport,
     changeMarkerPos,
-    changeMousePos,
+   
   };
   return <ContextMap.Provider value={value}>{children}</ContextMap.Provider>;
 };

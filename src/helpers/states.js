@@ -15,3 +15,16 @@ export const getClass = (degree) => {
         'bg-green-400': degree >= 50,
     };
 };
+
+export const getStateColor = (degree) =>{
+    return {
+        'red': degree < -50,
+        'yellow': degree >= -50 && degree < 0,
+        'yellow': degree >= 0 && degree < 50,
+        'green': degree >= 50,
+    }
+}
+
+export function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
