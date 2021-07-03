@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { database, getDoc, getDocs } from '../../api/firebase';
 import JsonActivity from '../../components/jsonActivity';
 import IconButton from '../../components/common/iconButton';
