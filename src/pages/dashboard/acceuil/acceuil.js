@@ -6,6 +6,8 @@ import CollectorTable from '../../projects/collectorTable';
 import ProjectTable from './projectTable';
 import { useHistory } from 'react-router';
 import { useInfo } from '../../../hook/useInfo';
+import Demande from '../../../components/demande';
+import Notifications from './notifications';
 
 const Acceuil = () => {
     const history = useHistory();
@@ -16,6 +18,9 @@ const Acceuil = () => {
             <Switch>
                 <Route exact path="/dashboard/acceuil">
                     <Redirect to="/dashboard/acceuil/projets" />
+                </Route>
+                <Route path="/dashboard/acceuil/notifications">
+                    <Notifications />
                 </Route>
                 <Route path="/dashboard/acceuil/projets">
                     <div className="text-3xl text-gray-500">

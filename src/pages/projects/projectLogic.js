@@ -103,19 +103,29 @@ const ProjectLogic = (projectID) => {
     }, [work]);
 
     const updateCollectors = (collectors) => {
-        setCollectors(collectors);
         const updateProject = {
             ...project,
             collectors: collectors.map((c) => c.docID),
         };
-        database.projects.doc(projectID).set(updateProject);
+        database.projects
+            .doc(projectID)
+            .set(updateProject)
+            .then(() => setCollectors(collectors));
     };
-    const addCollector = (collector) => {
+    const addCollector = async (collector) => {
         if (
             collector.role === 'collecteur' &&
             !collectors.includes(collector.docID)
         ) {
             updateCollectors([...collectors, collector]);
+
+            await database.notifications.add({
+                message: `Vous êtes invité d'être un collecteur du projet`,
+                sentBy: owner.email,
+                to: collector.docID,
+                project: project.title,
+                state: 'pending',
+            });
         }
     };
     const handleDelete = (collector) => {
@@ -130,7 +140,7 @@ const ProjectLogic = (projectID) => {
             const getUserByEmail = database.users.where('email', '==', value);
             const collector = await getDocs(getUserByEmail);
             try {
-                addCollector(collector[0]);
+                await addCollector(collector[0]);
             } catch {
                 alert('Something went wrong.');
             }
