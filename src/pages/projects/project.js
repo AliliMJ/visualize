@@ -4,13 +4,13 @@ import CollectorTable from './collectorTable';
 import ActivityTable from './activityTable';
 
 import IconButton from '../../components/common/iconButton';
-import { FaPlus, FaArrowRight } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import CollectorModal from './collectorModal';
 import ProjectLogic from './projectLogic';
 
 import ActivityModal from './activityModal';
 import { useHistory } from 'react-router-dom';
-
+import ReturnButton from '../../components/ReturnButton';
 /**
  *
  *
@@ -47,13 +47,7 @@ const Project = ({ match }) => {
                         N° {project.docID}
                     </p>
                 </div>
-                <IconButton
-                    className="text-gray-500 space-x-2"
-                    onClick={() => history.push('/dashboard')}
-                >
-                    <span>Retour</span>
-                    <FaArrowRight />
-                </IconButton>
+                <ReturnButton history={history} right />
             </div>
             <div className="border-t border-gray-200">
                 <dl>
