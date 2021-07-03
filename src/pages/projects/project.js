@@ -4,11 +4,12 @@ import CollectorTable from './collectorTable';
 import ActivityTable from './activityTable';
 
 import IconButton from '../../components/common/iconButton';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaArrowRight } from 'react-icons/fa';
 import CollectorModal from './collectorModal';
 import ProjectLogic from './projectLogic';
 
 import ActivityModal from './activityModal';
+import { useHistory } from 'react-router-dom';
 
 /**
  *
@@ -31,19 +32,28 @@ const Project = ({ match }) => {
         handleDeleteActivity,
         work,
     } = ProjectLogic(match.params.id);
-
+    const history = useHistory();
     return project ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             {collectorModal && <CollectorModal emit={handleAddCollector} />}
             {activityModal && <ActivityModal emit={handleAddActivity} />}
 
-            <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-bold text-gray-900">
-                    Détails du projet
-                </h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                    N° {project.docID}
-                </p>
+            <div className="px-4 py-5 sm:px-6 flex justify-between">
+                <div>
+                    <h3 className="text-lg leading-6 font-bold text-gray-900">
+                        Détails du projet
+                    </h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        N° {project.docID}
+                    </p>
+                </div>
+                <IconButton
+                    className="text-gray-500 space-x-2"
+                    onClick={() => history.push('/dashboard')}
+                >
+                    <span>Retour</span>
+                    <FaArrowRight />
+                </IconButton>
             </div>
             <div className="border-t border-gray-200">
                 <dl>
