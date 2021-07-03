@@ -5,9 +5,11 @@ import { FaPlus } from 'react-icons/fa';
 import CollectorTable from '../../projects/collectorTable';
 import ProjectTable from './projectTable';
 import { useHistory } from 'react-router';
+import { useInfo } from '../../../hook/useInfo';
 
 const Acceuil = () => {
     const history = useHistory();
+    const { role } = useInfo();
     return (
         <div className="space-y-6">
             {/* <TabsAcceuil /> */}
@@ -21,12 +23,14 @@ const Acceuil = () => {
                     </div>
                     <div className="space-y-1">
                         <ProjectTable />
-                        <IconButton
-                            className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
-                            onClick={() => history.push('/ajouter')}
-                        >
-                            <FaPlus />
-                        </IconButton>
+                        {role === 'superviseur' && (
+                            <IconButton
+                                className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
+                                onClick={() => history.push('/ajouter')}
+                            >
+                                <FaPlus />
+                            </IconButton>
+                        )}
                     </div>
                 </Route>
                 <Route path="/dashboard/acceuil/collecteurs">
