@@ -58,10 +58,8 @@ function Sidebar({ className }) {
     const { logout } = useAuth();
 
     return (
-        <div>
-            <div
-                className={`flex flex-col py-20 space-y-3 h-full ${className}`}
-            >
+        <div className={`flex flex-col ${className}`}>
+            <div className="space-y-3 py-20 h-full flex flex-col ">
                 {buttons.map((button) => (
                     <SidebarButton
                         key={button.id}
@@ -72,14 +70,14 @@ function Sidebar({ className }) {
                     />
                 ))}
             </div>
-            <div className="w-full flex justify-center">
-                <IconButton
-                    className="mt-auto bg-red-500 text-white"
-                    onClick={() => logout()}
-                >
-                    <BiLogOut />
-                    <span>Sortir</span>
-                </IconButton>
+
+            <hr className="w-5/6 border-blue-300 py-1" />
+            <div onClick={() => logout()}>
+                <SidebarButton
+                    selected={false}
+                    name={'Sortir'}
+                    icon={() => <BiLogOut />}
+                />
             </div>
         </div>
     );
