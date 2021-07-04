@@ -32,13 +32,19 @@ const ProjectLogic = (projectID) => {
     const [collectorModal, setCollectorModal] = useState(false);
     const [documents, setDocuments] = useState([]);
 
-    const loadCollectors = async (collectorsID) => {
-        if (collectorsID.length > 0) {
+    const loadCollectors = async () => {
+        const collRef = database.notifications
+            .where('projectID', '==', projectID)
+            .where('state', '==', 'accepted');
+        const nots = await getDocs(collRef);
+        const colls = nots.map((n) => n.to);
+        console.log(colls);
+        if (colls.length > 0) {
             const collectorQuery = database.users.where(
                 firebase.firestore.FieldPath.documentId(),
                 'in',
 
-                collectorsID
+                colls
             );
             setCollectors(await getDocs(collectorQuery));
         }
@@ -48,7 +54,7 @@ const ProjectLogic = (projectID) => {
         const project = await getDoc(projectRef);
         setProject(project);
 
-        await loadCollectors(project.collectors);
+        await loadCollectors();
 
         const activityQuery = database.activities.where(
             'projectID',
@@ -102,38 +108,50 @@ const ProjectLogic = (projectID) => {
         }
     }, [work]);
 
-    const updateCollectors = (collectors) => {
-        const updateProject = {
-            ...project,
-            collectors: collectors.map((c) => c.docID),
-        };
-        database.projects
-            .doc(projectID)
-            .set(updateProject)
-            .then(() => setCollectors(collectors));
-    };
+    // const updateCollectors = (collectors) => {
+    //     const updateProject = {
+    //         ...project,
+    //         collectors: collectors.map((c) => c.docID),
+    //     };
+    //     database.projects
+    //         .doc(projectID)
+    //         .set(updateProject)
+    //         .then(() => setCollectors(collectors));
+    // };
     const addCollector = async (collector) => {
         if (
             collector.role === 'collecteur' &&
             !collectors.includes(collector.docID)
         ) {
-            updateCollectors([...collectors, collector]);
+            //updateCollectors([...collectors, collector]);
 
             await database.notifications.add({
                 message: `Vous êtes invité d'être un collecteur du projet`,
-                sentBy: owner.email,
+                sentBy: owner.docID,
                 to: collector.docID,
                 project: project.title,
+                projectID: projectID,
                 state: 'pending',
+                date: new Date().toDateString(),
             });
         }
     };
     const handleDelete = (collector) => {
+        const notif_query = database.notifications
+            .where('projectID', '==', projectID)
+            .where('to', '==', collector.docID);
+        notif_query.get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                doc.ref.delete();
+            });
+        });
+
         const filterCollector = collectors.filter(
             (c) => c.docID !== collector.docID
         );
+        setCollectors(filterCollector);
 
-        updateCollectors(filterCollector);
+        //updateCollectors(filterCollector);
     };
     const handleAddCollector = async ({ response, value }) => {
         if (response) {
