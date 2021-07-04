@@ -8,7 +8,7 @@ function TextField({ label, ...props }) {
     <>
       <div className="m-6">
         <input
-          className="form-input px-1 py-2 block w-full border border-black rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300"
+          className="form-input px-4 py-2 block w-full border border-black rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300"
           {...field}
           {...props}
           placeholder={label}

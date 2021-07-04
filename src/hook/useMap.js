@@ -6,15 +6,15 @@ export const useMap = () => {
   return useContext(ContextMap);
 };
 
-export const Map = ({ children }) => {
+export const MapProvider = ({ width, height, children }) => {
   const [lngLat, setLngLat] = useState([0, 0]);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [viewport, setViewport] = useState({
-    width: 800,
-    height: 500,
-    latitude: 37.7577,
-    longitude: -122.4376,
-    zoom: 8,
+    width: width,
+    height: height ,
+    latitude: 17.7577,
+    longitude: 5.4376,
+    zoom: 4,
   });
   function changeMarkerPos([x, y]) {
     setLngLat([x, y]);

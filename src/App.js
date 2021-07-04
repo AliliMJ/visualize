@@ -6,15 +6,13 @@ import { AuthProvider } from "./hook/useAuth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./components/privateRoute";
 import Dashboard from "./pages/dashboard";
-import { Map } from "./hook/useMap";
+import { MapProvider } from "./hook/useMap";
 import Project from "./pages/projects/project";
 import Activity from "./pages/projects/activity";
 import AddProject from "./pages/addProject/AddProject";
 
 function App() {
-    function nothing(){
-        
-    }
+    
   return (
     <div className="App">
       <Router>
@@ -23,14 +21,14 @@ function App() {
             <Route exact path="/" component={Welcome} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
-            <Map getLngLat={nothing}>
+            <MapProvider width={1480} height={870}>
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/projects/:id" component={Project} />
               <PrivateRoute exact path="/activities/:id" component={Activity} />
               <PrivateRoute path="/ajouter">
                 <AddProject />
               </PrivateRoute>
-            </Map>
+            </MapProvider>
           </Switch>
         </AuthProvider>
       </Router>
