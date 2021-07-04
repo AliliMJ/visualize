@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { database, getDocs, getDoc } from '../../api/firebase';
 import {
     calculateActivityPercentage,
     calculateActivityTimePercentage,
 } from './activity';
 import firebase from 'firebase';
+import { storage } from '../../api/firebase';
 
 /**
  *
@@ -22,21 +23,29 @@ const calculateActivityWork = (activity) => {
 };
 const ProjectLogic = (projectID) => {
     const [project, setProject] = useState({});
-    const [dataLoaded, setDataLoaded] = useState(false);
+
     const [work, setWork] = useState(0);
     const [owner, setOwner] = useState({});
     const [activityModal, setActivityModal] = useState(false);
     const [collectors, setCollectors] = useState([]);
     const [activities, setActivities] = useState([]);
     const [collectorModal, setCollectorModal] = useState(false);
-    
-    const loadCollectors = async (collectorsID) => {
-        if (collectorsID.length > 0) {
+    const [documents, setDocuments] = useState([]);
+
+    const loadCollectors = async () => {
+        const collRef = database.notifications
+            .where('projectID', '==', projectID)
+            .where('state', '==', 'accepted')
+            .where('type', '==', 'response');
+        const nots = await getDocs(collRef);
+        const colls = nots.map((n) => n.sentByID);
+        console.log(colls);
+        if (colls.length > 0) {
             const collectorQuery = database.users.where(
                 firebase.firestore.FieldPath.documentId(),
                 'in',
 
-                collectorsID
+                colls
             );
             setCollectors(await getDocs(collectorQuery));
         }
@@ -46,7 +55,7 @@ const ProjectLogic = (projectID) => {
         const project = await getDoc(projectRef);
         setProject(project);
 
-        await loadCollectors(project.collectors);
+        await loadCollectors();
 
         const activityQuery = database.activities.where(
             'projectID',
@@ -57,6 +66,17 @@ const ProjectLogic = (projectID) => {
 
         const owner = await getDoc(database.users.doc(project.owner));
         setOwner(owner);
+        const cloudStorage = storage.ref();
+
+        const fileRef = cloudStorage.child(project.owner).child(project.title);
+        const results = await fileRef.listAll();
+        const docs = await Promise.all(
+            results.items.map(async (document) => ({
+                name: document.name,
+                url: await document.getDownloadURL(),
+            }))
+        );
+        setDocuments(docs);
     };
 
     useEffect(() => {
@@ -89,35 +109,61 @@ const ProjectLogic = (projectID) => {
         }
     }, [work]);
 
-    const updateCollectors = (collectors) => {
-        setCollectors(collectors);
-        const updateProject = {
-            ...project,
-            collectors: collectors.map((c) => c.docID),
-        };
-        database.projects.doc(projectID).set(updateProject);
-    };
-    const addCollector = (collector) => {
+    // const updateCollectors = (collectors) => {
+    //     const updateProject = {
+    //         ...project,
+    //         collectors: collectors.map((c) => c.docID),
+    //     };
+    //     database.projects
+    //         .doc(projectID)
+    //         .set(updateProject)
+    //         .then(() => setCollectors(collectors));
+    // };
+    const addCollector = async (collector) => {
         if (
             collector.role === 'collecteur' &&
             !collectors.includes(collector.docID)
         ) {
-            updateCollectors([...collectors, collector]);
+            //updateCollectors([...collectors, collector]);
+
+            await database.notifications.add({
+                message: `Vous êtes invité d'être un collecteur du projet`,
+                sentByID: owner.docID,
+                sentByEmail: owner.email,
+                to_id: collector.docID,
+                to_email: collector.email,
+                project: project.title,
+                projectID: projectID,
+                type: 'invitation',
+                state: 'pending',
+                date: new Date().toDateString(),
+            });
         }
     };
     const handleDelete = (collector) => {
+        const notif_query = database.notifications
+            .where('projectID', '==', projectID)
+            .where('sentByID', '==', collector.docID)
+            .where('type', '==', 'response');
+        notif_query.get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                doc.ref.delete();
+            });
+        });
+
         const filterCollector = collectors.filter(
             (c) => c.docID !== collector.docID
         );
+        setCollectors(filterCollector);
 
-        updateCollectors(filterCollector);
+        //updateCollectors(filterCollector);
     };
     const handleAddCollector = async ({ response, value }) => {
         if (response) {
             const getUserByEmail = database.users.where('email', '==', value);
             const collector = await getDocs(getUserByEmail);
             try {
-                addCollector(collector[0]);
+                await addCollector(collector[0]);
             } catch {
                 alert('Something went wrong.');
             }
@@ -163,6 +209,7 @@ const ProjectLogic = (projectID) => {
         handleAddActivity,
         handleDelete,
         handleDeleteActivity,
+        documents,
     };
 };
 

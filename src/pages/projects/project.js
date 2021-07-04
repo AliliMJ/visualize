@@ -11,6 +11,10 @@ import ProjectLogic from './projectLogic';
 import ActivityModal from './activityModal';
 import { useHistory } from 'react-router-dom';
 import ReturnButton from '../../components/ReturnButton';
+import Document from '../../components/document';
+import { useInfo } from '../../hook/useInfo';
+import Dialog from '../../components/common/diag';
+import { useState } from 'react';
 /**
  *
  *
@@ -31,13 +35,22 @@ const Project = ({ match }) => {
         handleDelete,
         handleDeleteActivity,
         work,
+        documents,
     } = ProjectLogic(match.params.id);
     const history = useHistory();
+    const { role } = useInfo();
+    const [privilegeModal, setPrivilegeModal] = useState(false);
     return project ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             {collectorModal && <CollectorModal emit={handleAddCollector} />}
             {activityModal && <ActivityModal emit={handleAddActivity} />}
-
+            {privilegeModal && (
+                <Dialog
+                    title="Probléme"
+                    message="Vous n'avez pas les préviléges! vous êtes cencé de collecter des données."
+                    action={() => setPrivilegeModal(false)}
+                />
+            )}
             <div className="px-4 py-5 sm:px-6 flex justify-between">
                 <div>
                     <h3 className="text-lg leading-6 font-bold text-gray-900">
@@ -120,36 +133,13 @@ const Project = ({ match }) => {
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                             <ul className="border border-gray-200 rounded-md divide-y divide-gray-200">
-                                <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                    <div className="w-0 flex-1 flex items-center">
-                                        <span className="ml-2 flex-1 w-0 truncate">
-                                            resume_back_end_developer.pdf
-                                        </span>
-                                    </div>
-                                    <div className="ml-4 flex-shrink-0">
-                                        <a
-                                            href="#"
-                                            className="font-medium text-indigo-600 hover:text-indigo-500"
-                                        >
-                                            Download
-                                        </a>
-                                    </div>
-                                </li>
-                                <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                    <div className="w-0 flex-1 flex items-center">
-                                        <span className="ml-2 flex-1 w-0 truncate">
-                                            coverletter_back_end_developer.pdf
-                                        </span>
-                                    </div>
-                                    <div className="ml-4 flex-shrink-0">
-                                        <a
-                                            href="#"
-                                            className="font-medium text-indigo-600 hover:text-indigo-500"
-                                        >
-                                            Download
-                                        </a>
-                                    </div>
-                                </li>
+                                {documents.map((document) => (
+                                    <Document
+                                        key={document.url}
+                                        name={document.name}
+                                        url={document.url}
+                                    />
+                                ))}
                             </ul>
                         </dd>
                     </div>
@@ -160,14 +150,20 @@ const Project = ({ match }) => {
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex-col space-y-1">
                             <CollectorTable
                                 collectors={collectors}
-                                onDelete={handleDelete}
+                                onDelete={
+                                    role === 'superviseur'
+                                        ? handleDelete
+                                        : () => setPrivilegeModal(true)
+                                }
                             />
-                            <IconButton
-                                className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
-                                onClick={() => setCollectorModal(true)}
-                            >
-                                <FaPlus />
-                            </IconButton>
+                            {role === 'superviseur' && (
+                                <IconButton
+                                    className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
+                                    onClick={() => setCollectorModal(true)}
+                                >
+                                    <FaPlus />
+                                </IconButton>
+                            )}
                         </dd>
                     </div>
 
@@ -178,15 +174,20 @@ const Project = ({ match }) => {
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex-col space-y-1">
                             <ActivityTable
                                 activities={activities}
-                                onDelete={handleDeleteActivity}
+                                onDelete={
+                                    role === 'superviseur'
+                                        ? handleDeleteActivity
+                                        : () => setPrivilegeModal(true)
+                                }
                             />
-
-                            <IconButton
-                                onClick={() => setActivityModal(true)}
-                                className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
-                            >
-                                <FaPlus />
-                            </IconButton>
+                            {role === 'superviseur' && (
+                                <IconButton
+                                    onClick={() => setActivityModal(true)}
+                                    className="bg-transparent shadow border w-full text-gray-500 rounded items-center justify-center"
+                                >
+                                    <FaPlus />
+                                </IconButton>
+                            )}
                         </dd>
                     </div>
                 </dl>

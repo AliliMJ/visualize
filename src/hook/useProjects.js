@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useInfo } from './useInfo';
 import { database } from '../api/firebase';
+import firebase from 'firebase';
 import { useAuth } from './useAuth';
 import { getDocs } from '../api/firebase';
 /**
@@ -14,13 +15,28 @@ export const useProjects = () => {
     const [projects, setProjects] = useState([]);
     useEffect(() => {
         const getProjects = async () => {
-            const param =
-                role === 'superviseur'
-                    ? ['owner', '==', user.uid]
-                    : ['collectors', 'array-contains', user.uid];
+            let query;
+            console.log(role);
+            if (role === 'superviseur')
+                query = database.projects.where('owner', '==', user.uid);
+            else if (role === 'collecteur') {
+                const notification = await getDocs(
+                    database.notifications
+                        .where('sentByID', '==', user.uid)
+                        .where('type', '==', 'response')
+                        .where('state', '==', 'accepted')
+                );
+                if (notification.length === 0) return [];
+                const projectIDs = notification.map((p) => p.projectID);
+                query = database.projects.where(
+                    firebase.firestore.FieldPath.documentId(),
+                    'in',
+                    projectIDs
+                );
+            } else return [];
 
-            const query = database.projects.where(...param);
             const data = await getDocs(query);
+            console.log(data);
             setProjects(data);
         };
         return getProjects();

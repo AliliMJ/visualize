@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { database, getDoc, getDocs } from '../../api/firebase';
 import JsonActivity from '../../components/jsonActivity';
 import IconButton from '../../components/common/iconButton';
@@ -16,6 +16,7 @@ import { useHistory } from 'react-router';
 
 import FactureTable from './factureTable';
 import { useInfo } from '../../hook/useInfo';
+import Dialog from '../../components/common/diag';
 const difference = ({ expected, actual }) => {
     actual = actual ?? 0;
     expected = expected ?? 0;
@@ -62,9 +63,11 @@ const Activity = ({ match }) => {
     const { firstName, lastName } = useInfo();
     const [activity, setActivity] = useState({});
     const [factures, setFactures] = useState([]);
+    const [modal, setModal] = useState(false);
     const [timeLeftPercentage, setTimeLeftPercentage] = useState(0);
     const [remainingPercentage, setRemainingPercentage] = useState(0);
     const history = useHistory();
+    const { role } = useInfo();
 
     // const budgetPercentage = useCallback(() => {
     //     if (activity.budget === 0 || !activity.budget) return 100;
@@ -81,16 +84,23 @@ const Activity = ({ match }) => {
     // }, [activity.budget, factures]);
 
     const onAdd = ({ new_value }) => {
-        const new_activity = { ...activity };
-        new_activity.actual = { ...new_activity.actual, ...new_value };
-        new_activity.expected = { ...new_activity.expected, ...new_value };
-        setActivity(new_activity);
+        if (role === 'collecteur') setModal(true);
+        else {
+            const new_activity = { ...activity };
+            new_activity.actual = { ...new_activity.actual, ...new_value };
+            new_activity.expected = { ...new_activity.expected, ...new_value };
+            setActivity(new_activity);
+        }
     };
     const onEdit = (data, obj) => {
-        const new_activity = { ...activity };
-        new_activity[obj][data.name] = data.new_value;
-        new_activity.percentage = calculateActivityPercentage(activity);
-        setActivity(new_activity);
+        if ((obj === 'data' || obj === 'expected') && role === 'collecteur') {
+            setModal(true);
+        } else {
+            const new_activity = { ...activity };
+            new_activity[obj][data.name] = data.new_value;
+            new_activity.percentage = calculateActivityPercentage(activity);
+            setActivity(new_activity);
+        }
     };
     const validate = async () => {
         const new_activity = { ...activity };
@@ -216,6 +226,7 @@ const Activity = ({ match }) => {
             </div>
 
             <JsonActivity
+                hasAccess={role === 'superviseur'}
                 onEdit={(data) => onEdit(data, 'data')}
                 className="col-span-full relative"
                 name="Données statiques de la phase"
@@ -252,12 +263,14 @@ const Activity = ({ match }) => {
                 </div>
             </JsonActivity>
             <JsonActivity
-                onEdit={(data) => onEdit(data, 'expected')}
+                hasAccess={role === 'superviseur'}
                 onAdd={onAdd}
+                onEdit={(data) => onEdit(data, 'expected')}
                 name="Objectifs"
                 src={expected}
             />
             <JsonActivity
+                hasAccess
                 onEdit={(data) => onEdit(data, 'actual')}
                 name="Données actuelles"
                 src={actual}
