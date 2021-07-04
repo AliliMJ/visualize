@@ -20,10 +20,10 @@ export const useProjects = () => {
             if (role === 'superviseur')
                 query = database.projects.where('owner', '==', user.uid);
             else if (role === 'collecteur') {
-                console.log('wtd');
                 const notification = await getDocs(
                     database.notifications
-                        .where('to', '==', user.uid)
+                        .where('sentByID', '==', user.uid)
+                        .where('type', '==', 'response')
                         .where('state', '==', 'accepted')
                 );
                 if (notification.length === 0) return [];
@@ -36,6 +36,7 @@ export const useProjects = () => {
             } else return [];
 
             const data = await getDocs(query);
+            console.log(data);
             setProjects(data);
         };
         return getProjects();
