@@ -35,9 +35,10 @@ const ProjectLogic = (projectID) => {
     const loadCollectors = async () => {
         const collRef = database.notifications
             .where('projectID', '==', projectID)
-            .where('state', '==', 'accepted');
+            .where('state', '==', 'accepted')
+            .where('type', '==', 'response');
         const nots = await getDocs(collRef);
-        const colls = nots.map((n) => n.to);
+        const colls = nots.map((n) => n.sentByID);
         console.log(colls);
         if (colls.length > 0) {
             const collectorQuery = database.users.where(
@@ -127,10 +128,13 @@ const ProjectLogic = (projectID) => {
 
             await database.notifications.add({
                 message: `Vous êtes invité d'être un collecteur du projet`,
-                sentBy: owner.docID,
-                to: collector.docID,
+                sentByID: owner.docID,
+                sentByEmail: owner.email,
+                to_id: collector.docID,
+                to_email: collector.email,
                 project: project.title,
                 projectID: projectID,
+                type: 'invitation',
                 state: 'pending',
                 date: new Date().toDateString(),
             });
@@ -139,7 +143,8 @@ const ProjectLogic = (projectID) => {
     const handleDelete = (collector) => {
         const notif_query = database.notifications
             .where('projectID', '==', projectID)
-            .where('to', '==', collector.docID);
+            .where('sentByID', '==', collector.docID)
+            .where('type', '==', 'response');
         notif_query.get().then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
                 doc.ref.delete();

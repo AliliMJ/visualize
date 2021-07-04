@@ -7,8 +7,12 @@ const Demande = ({ notification, accept, decline }) => {
         <div
             className={classNames(
                 'py-3 px-4 border rounded  shadow flex justify-between items-center',
-                { 'bg-green-200': notification.state === 'accepted' },
-                { 'bg-red-200': notification.state === 'declined' }
+                {
+                    'bg-green-200': notification.state === 'accepted',
+                },
+                {
+                    'bg-red-200': notification.state === 'declined',
+                }
             )}
         >
             <div className="flex space-x-2 items-center">
@@ -29,22 +33,23 @@ const Demande = ({ notification, accept, decline }) => {
                 <span className="text-gray-400 mr-10">
                     Reçu {notification.date}
                 </span>
-                {notification.state === 'pending' && (
-                    <div className="flex space-x-3">
-                        <IconButton
-                            className="bg-green-500 text-white  shadow"
-                            onClick={() => accept(notification)}
-                        >
-                            <FaCheck />
-                        </IconButton>
-                        <IconButton
-                            className="text-red-500 shadow"
-                            onClick={() => decline(notification)}
-                        >
-                            <FaTimes />
-                        </IconButton>
-                    </div>
-                )}
+                {notification.type === 'invitation' &&
+                    notification.state === 'pending' && (
+                        <div className="flex space-x-3">
+                            <IconButton
+                                className="bg-green-500 text-white  shadow"
+                                onClick={() => accept(notification)}
+                            >
+                                <FaCheck />
+                            </IconButton>
+                            <IconButton
+                                className="text-red-500 shadow"
+                                onClick={() => decline(notification)}
+                            >
+                                <FaTimes />
+                            </IconButton>
+                        </div>
+                    )}
             </div>
         </div>
     );
