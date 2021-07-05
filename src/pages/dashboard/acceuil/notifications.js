@@ -63,9 +63,7 @@ const Notifications = () => {
         <div className="space-y-10">
             {role === 'superviseur' && (
                 <div className="space-y-4">
-                    <h3 className="text-3xl text-gray-500">
-                        Envoyées par vous
-                    </h3>
+                    <h3 className="text-3xl text-gray-500">Invitations</h3>
                     <div className="space-y-1">
                         {envoye
                             .filter(
@@ -83,7 +81,7 @@ const Notifications = () => {
                 </div>
             )}
             <div className="space-y-4">
-                <h3 className="text-3xl text-gray-500">Réponses</h3>
+                <h3 className="text-3xl text-gray-500">Notifications</h3>
                 <div className="space-y-1">
                     {recu.map((notification) => (
                         <Demande

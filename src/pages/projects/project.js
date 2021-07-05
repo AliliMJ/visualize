@@ -15,6 +15,7 @@ import Document from '../../components/document';
 import { useInfo } from '../../hook/useInfo';
 import Dialog from '../../components/common/diag';
 import { useState } from 'react';
+import defaultAvatar from '../../res/defaultAvatar.png';
 /**
  *
  *
@@ -81,7 +82,7 @@ const Project = ({ match }) => {
                                 <div className="flex-shrink-0 h-10 w-10">
                                     <img
                                         className="h-10 w-10 rounded-full"
-                                        src={owner.avatar}
+                                        src={owner.avatar || defaultAvatar}
                                         alt=""
                                     />
                                 </div>

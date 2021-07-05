@@ -28,14 +28,7 @@ function Sidebar({ className }) {
             },
             path: '/dashboard/carte',
         },
-        {
-            id: 'documents',
-            name: 'Documents',
-            icon: function ({ ...props }) {
-                return <TiDocumentText {...props} />;
-            },
-            path: '/dashboard/documents',
-        },
+
         {
             id: 'profile',
             name: 'Profil',
