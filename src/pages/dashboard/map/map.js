@@ -150,7 +150,7 @@ function Map({ projects, ...props }) {
             
             onViewportChange={(nextViewport) => setViewport(nextViewport)}
             mapboxApiAccessToken={"pk.eyJ1IjoiaGFtemFmZWdob3VsaSIsImEiOiJja3FzNDY2eXQwZnBuMnBvMzJldnFzMmEzIn0.3_ghKI7HabcHRWzRpii0VA"}
-            mapStyle="mapbox://styles/hamzafeghouli/ckkv7rq403udv17plnccrhpaw"
+            mapStyle="mapbox://styles/hamzafeghouli/ckkv7wgfo3pe417pgw0e1mycw"
             onClick={(e) => {
               changeMarkerPos(e.lngLat);
               props.getLngLat(e.lngLat);
