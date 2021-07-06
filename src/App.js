@@ -12,16 +12,19 @@ import Activity from "./pages/projects/activity";
 import AddProject from "./pages/addProject/AddProject";
 
 function App() {
+
     
   return (
+    
     <div className="App">
+      
       <Router>
         <AuthProvider>
           <Switch>
             <Route exact path="/" component={Welcome} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
-            <MapProvider width={1480} height={870}>
+            <MapProvider width={window.innerWidth*0.77} height={window.innerHeight*0.9}>
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/projects/:id" component={Project} />
               <PrivateRoute exact path="/activities/:id" component={Activity} />

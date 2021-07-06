@@ -10,8 +10,8 @@ import AddProject from "../addProject/AddProject";
 import { useProjects } from "../../hook/useProjects";
 
 const Dashboard = () => {
-    const projects = useProjects();
-    function nothing() {}
+  const projects = useProjects();
+  function nothing() {}
   return (
     <div className="grid grid-cols-5 px-2 gap-0 bg-blue-500 h-screen py-2">
       <img className="w-20 place-self-center py-3" src={logo_white} />
@@ -32,13 +32,13 @@ const Dashboard = () => {
             <Support />
           </Route>
           <Route path="/dashboard/carte">
-            <Map projects={projects} getLngLat={nothing}/>
+            <div className="h-3/5"> 
+              <Map projects={projects} getLngLat={nothing} />
+            </div>
           </Route>
           <Route path="/dashboard/acceuil">
             <Acceuil />
           </Route>
-
-          
         </Switch>
       </div>
     </div>
