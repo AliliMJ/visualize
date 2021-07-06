@@ -24,7 +24,7 @@ function App() {
             <Route exact path="/" component={Welcome} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
-            <MapProvider width={window.innerWidth*0.77} height={window.innerHeight*0.9}>
+            <MapProvider width={window.innerWidth*0.77} height={window.innerHeight*0.8}>
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/projects/:id" component={Project} />
               <PrivateRoute exact path="/activities/:id" component={Activity} />

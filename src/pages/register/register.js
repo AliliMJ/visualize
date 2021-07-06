@@ -36,7 +36,7 @@ const Register = () => {
         role,
       });
 
-      history.push('/home');
+      history.push('/dashboard/acceuil');
     } catch (e) {
       alert(e);
     }

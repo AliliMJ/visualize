@@ -14,7 +14,7 @@ function Sidebar({ className }) {
     const buttons = [
         {
             id: 'acceuil',
-            name: 'Acceuil',
+            name: 'Accueil',
             icon: function (props) {
                 return <AiFillHome {...props} />;
             },
