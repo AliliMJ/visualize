@@ -149,7 +149,7 @@ function Map({ projects, ...props }) {
             ref={mapRef}
             
             onViewportChange={(nextViewport) => setViewport(nextViewport)}
-            mapboxApiAccessToken={MAPBOX_TOKEN}
+            mapboxApiAccessToken={"pk.eyJ1IjoiaGFtemFmZWdob3VsaSIsImEiOiJja3FzNDY2eXQwZnBuMnBvMzJldnFzMmEzIn0.3_ghKI7HabcHRWzRpii0VA"}
             mapStyle="mapbox://styles/hamzafeghouli/ckkv7wgfo3pe417pgw0e1mycw"
             onClick={(e) => {
               changeMarkerPos(e.lngLat);
@@ -184,7 +184,7 @@ function Map({ projects, ...props }) {
               {console.log(setViewport)}
             <Geocoder
               mapRef={mapRef}
-              mapboxApiAccessToken={MAPBOX_TOKEN}
+              mapboxApiAccessToken={"pk.eyJ1IjoiaGFtemFmZWdob3VsaSIsImEiOiJja3FzNDY2eXQwZnBuMnBvMzJldnFzMmEzIn0.3_ghKI7HabcHRWzRpii0VA"}
               onViewportChange={handleViewportChange}
               position="top-left"
               
