@@ -1,0 +1,216 @@
+import { useState, useEffect } from 'react';
+import { database, getDocs, getDoc } from '../../api/firebase';
+import {
+    calculateActivityPercentage,
+    calculateActivityTimePercentage,
+} from './activity';
+import firebase from 'firebase';
+import { storage } from '../../api/firebase';
+
+/**
+ *
+ *
+ * @todo Clean up of facturess after delete of activity.
+ */
+const calculateActivityWork = (activity) => {
+    if (activity.state === 'Done') {
+        return 100;
+    } else
+        return (
+            calculateActivityPercentage(activity) -
+            calculateActivityTimePercentage(activity)
+        );
+};
+const ProjectLogic = (projectID) => {
+    const [project, setProject] = useState({});
+
+    const [work, setWork] = useState(0);
+    const [owner, setOwner] = useState({});
+    const [activityModal, setActivityModal] = useState(false);
+    const [collectors, setCollectors] = useState([]);
+    const [activities, setActivities] = useState([]);
+    const [collectorModal, setCollectorModal] = useState(false);
+    const [documents, setDocuments] = useState([]);
+
+    const loadCollectors = async () => {
+        const collRef = database.notifications
+            .where('projectID', '==', projectID)
+            .where('state', '==', 'accepted')
+            .where('type', '==', 'response');
+        const nots = await getDocs(collRef);
+        const colls = nots.map((n) => n.sentByID);
+        console.log(colls);
+        if (colls.length > 0) {
+            const collectorQuery = database.users.where(
+                firebase.firestore.FieldPath.documentId(),
+                'in',
+
+                colls
+            );
+            setCollectors(await getDocs(collectorQuery));
+        }
+    };
+    const load = async () => {
+        const projectRef = database.projects.doc(projectID);
+        const project = await getDoc(projectRef);
+        setProject(project);
+
+        await loadCollectors();
+
+        const activityQuery = database.activities.where(
+            'projectID',
+            '==',
+            project.docID
+        );
+        setActivities(await getDocs(activityQuery));
+
+        const owner = await getDoc(database.users.doc(project.owner));
+        setOwner(owner);
+        const cloudStorage = storage.ref();
+
+        const fileRef = cloudStorage.child(project.owner).child(project.title);
+        const results = await fileRef.listAll();
+        const docs = await Promise.all(
+            results.items.map(async (document) => ({
+                name: document.name,
+                url: await document.getDownloadURL(),
+            }))
+        );
+        setDocuments(docs);
+    };
+
+    useEffect(() => {
+        load();
+    }, []);
+
+    // useEffect(() => {
+    //     return async () => {
+    //         // const p = await database.projects
+    //         //     .doc(projectID)
+    //         //     .set({ ...project, work });
+    //         console.log(project);
+    //     };
+    // }, [projectID]);
+
+    useEffect(() => {
+        if (activities.length === 0) setWork(0);
+        else {
+            const total = activities.reduce(
+                (acc, activity) => acc + calculateActivityWork(activity),
+                0
+            );
+            setWork(total / activities.length);
+        }
+    }, [activities]);
+    useEffect(() => {
+        if (Object.keys(project).length > 0) {
+            const { docID, ...p } = project;
+            database.projects.doc(projectID).set({ ...p, work });
+        }
+    }, [work]);
+
+    // const updateCollectors = (collectors) => {
+    //     const updateProject = {
+    //         ...project,
+    //         collectors: collectors.map((c) => c.docID),
+    //     };
+    //     database.projects
+    //         .doc(projectID)
+    //         .set(updateProject)
+    //         .then(() => setCollectors(collectors));
+    // };
+    const addCollector = async (collector) => {
+        if (
+            collector.role === 'collecteur' &&
+            !collectors.includes(collector.docID)
+        ) {
+            //updateCollectors([...collectors, collector]);
+
+            await database.notifications.add({
+                message: `Vous êtes invité d'être un collecteur du projet`,
+                sentByID: owner.docID,
+                sentByEmail: owner.email,
+                to_id: collector.docID,
+                to_email: collector.email,
+                project: project.title,
+                projectID: projectID,
+                type: 'invitation',
+                state: 'pending',
+                date: new Date().toDateString(),
+            });
+        }
+    };
+    const handleDelete = (collector) => {
+        const notif_query = database.notifications
+            .where('projectID', '==', projectID)
+            .where('sentByID', '==', collector.docID)
+            .where('type', '==', 'response');
+        notif_query.get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                doc.ref.delete();
+            });
+        });
+
+        const filterCollector = collectors.filter(
+            (c) => c.docID !== collector.docID
+        );
+        setCollectors(filterCollector);
+
+        //updateCollectors(filterCollector);
+    };
+    const handleAddCollector = async ({ response, value }) => {
+        if (response) {
+            const getUserByEmail = database.users.where('email', '==', value);
+            const collector = await getDocs(getUserByEmail);
+            try {
+                await addCollector(collector[0]);
+            } catch {
+                alert('Something went wrong.');
+            }
+        }
+
+        setCollectorModal(false);
+    };
+
+    const handleAddActivity = async ({ response, value }) => {
+        if (response) {
+            const activity = {
+                state: 'Not started',
+                projectID,
+                phase: activities.length + 1,
+                percentage: 0,
+                remaining: value.budget,
+                ...value,
+            };
+            const { id } = await database.activities.add(activity);
+
+            setActivities([...activities, { ...activity, docID: id }]);
+        }
+        setActivityModal(false);
+    };
+    const handleDeleteActivity = async (activity) => {
+        try {
+            await database.activities.doc(activity.docID).delete();
+            setActivities(activities.filter((a) => a.docID !== activity.docID));
+        } catch {}
+    };
+
+    return {
+        project,
+        work,
+        collectors,
+        activities,
+        owner,
+        collectorModal,
+        activityModal,
+        setActivityModal,
+        setCollectorModal,
+        handleAddCollector,
+        handleAddActivity,
+        handleDelete,
+        handleDeleteActivity,
+        documents,
+    };
+};
+
+export default ProjectLogic;
